@@ -74,7 +74,7 @@ commands:
     cancel-on-move: true
     cancel-on-damage: true
     allow-in-combat: false
-    safety-check: CANCEL
+    safety-check: NONE
     blacklist-worlds: []
 
   tpax:
@@ -88,7 +88,7 @@ commands:
     cancel-on-move: true
     cancel-on-damage: true
     allow-in-combat: false
-    safety-check: CANCEL
+    safety-check: NONE
     request-timeout: 60    # 秒
     blacklist-worlds: []
 
@@ -103,7 +103,7 @@ commands:
     cancel-on-move: true
     cancel-on-damage: true
     allow-in-combat: false
-    safety-check: CANCEL
+    safety-check: NONE
     request-timeout: 60
     blacklist-worlds: []
 
@@ -143,7 +143,7 @@ commands:
     cancel-on-move: true
     cancel-on-damage: true
     allow-in-combat: false
-    safety-check: CANCEL
+    safety-check: NONE
     blacklist-worlds: []
 
   backx:
@@ -157,5 +157,5 @@ commands:
     cancel-on-move: false
     cancel-on-damage: false
     allow-in-combat: true   # 死亡直後の復帰用に許可
-    safety-check: CANCEL
+    safety-check: NONE
     blacklist-worlds: []

@@ -142,10 +142,10 @@ permissions:
     default: op
   sxt.bypass.cost.<cmd>:
     description: "XP消費のバイパス"
-    default: op
+    default: false
   sxt.bypass.cost.*:
     description: "全XP消費バイパス"
-    default: op
+    default: false
   sxt.admin.reload:
     description: "設定再読込"
     default: op
@@ -170,4 +170,4 @@ permissions:
       sxt.bypass.cooldown.*: true
       sxt.bypass.warmup.*: true
       sxt.bypass.combat.*: true
-      sxt.bypass.cost.*: true
+      sxt.bypass.cost.*: false
