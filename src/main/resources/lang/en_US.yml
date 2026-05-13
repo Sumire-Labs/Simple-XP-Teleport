@@ -69,7 +69,7 @@ tpa:
 rtp:
   searching: "<prefix><aqua>Searching for a random location...</aqua>"
   teleporting: "<prefix><green>Teleporting to <world> (<x>, <y>, <z>).</green>"
-  invalid-range: "<prefix><red>Range must be non-negative integers with max >= min: /rtpx <min> <max> <world></red>"
+  invalid-range: "<prefix><red>Range must be non-negative integers with max >= min: /rtpx <min> <max></red>"
 
 tppos:
   teleporting: "<prefix><green>Teleporting to (<x>, <y>, <z>) in <world>.</green>"

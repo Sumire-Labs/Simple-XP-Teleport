@@ -47,7 +47,7 @@ commands:
     permission: sxt.use.tpdenyx
   rtpx:
     description: "ランダム座標へテレポート"
-    usage: "/rtpx <min> <max> <world>"
+    usage: "/rtpx <min> <max>"
     permission: sxt.use.rtpx
   tpposx:
     description: "座標指定テレポート"

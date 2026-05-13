@@ -5,7 +5,6 @@ import com.example.sxt.config.CommandKey;
 import com.example.sxt.message.MessageService;
 import com.example.sxt.teleport.RandomLocationFinder;
 import com.example.sxt.teleport.TeleportService;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -18,8 +17,8 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * /rtpx &lt;min&gt; &lt;max&gt; &lt;world&gt; — teleports the player to a random safe location
- * within the specified annular radius range.
+ * /rtpx &lt;min&gt; &lt;max&gt; — teleports the player to a random safe location
+ * within the specified annular radius range in the player's current world.
  *
  * <p>The random location is found via {@link RandomLocationFinder} on the
  * <strong>main thread</strong> because the underlying
@@ -52,7 +51,7 @@ public final class RtpCommand implements CommandExecutor {
             return true;
         }
 
-        if (args.length != 3) {
+        if (args.length != 2) {
             msg.send(sender, "general.usage", Map.of("usage", command.getUsage()));
             return true;
         }
@@ -73,12 +72,8 @@ public final class RtpCommand implements CommandExecutor {
             return true;
         }
 
-        // ── Determine target world ──────────────────────────
-        World world = Bukkit.getWorld(args[2]);
-        if (world == null) {
-            msg.send(player, "world.not-found", Map.of("world", args[2]));
-            return true;
-        }
+        // ── Target world is always the player's current world ─
+        World world = player.getWorld();
 
         // ── Send searching message immediately ──────────────
         msg.send(player, "rtp.searching", Map.of());
