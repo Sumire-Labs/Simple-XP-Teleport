@@ -24,8 +24,8 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
     implementation("org.xerial:sqlite-jdbc:3.50.3.0")
     compileOnly("me.clip:placeholderapi:2.12.2")
-    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.14")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.13.4")
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.16")
+    testImplementation("org.junit.jupiter:junit-jupiter:6.0.3")
 }
 
 tasks {
