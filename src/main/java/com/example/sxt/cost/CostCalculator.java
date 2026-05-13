@@ -41,6 +41,31 @@ public final class CostCalculator {
         return Math.max(cfg.min(), Math.min(cfg.max(), cost));
     }
 
+    /**
+     * Like {@link #calculate(CommandConfig, Location, Location)} but uses
+     * {@code distanceOverride} instead of the actual Euclidean distance for
+     * {@link CostType#DISTANCE} cost calculations.
+     * For {@link CostType#FIXED} the override is ignored.
+     *
+     * <p>Used by /rtpx where the cost is based on the maximum search radius
+     * rather than the actual landing spot distance.</p>
+     */
+    public int calculate(CommandConfig cfg, Location from, Location to, int distanceOverride) {
+        if (cfg.costType() == CostType.FIXED) {
+            return calculate(cfg, from, to);
+        }
+
+        // CostType.DISTANCE — use override distance instead of actual
+        double raw = cfg.base() + cfg.perBlock() * distanceOverride;
+
+        if (isCrossWorld(from, to)) {
+            raw += cfg.crossWorldExtra();
+        }
+
+        int cost = (int) Math.round(raw);
+        return Math.max(cfg.min(), Math.min(cfg.max(), cost));
+    }
+
     private static boolean isCrossWorld(Location from, Location to) {
         if (from.getWorld() == null || to.getWorld() == null) {
             return false;

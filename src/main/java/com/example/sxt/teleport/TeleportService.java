@@ -19,6 +19,7 @@ import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Optional;
@@ -121,6 +122,25 @@ public final class TeleportService {
     }
 
     /**
+     * Initiate a teleport with a fixed distance override for cost calculation.
+     * Used by {@code /rtpx} where cost is based on the maximum search radius
+     * rather than the actual landing point distance.
+     *
+     * @param player           the player to teleport (also pays cost and starts cooldown)
+     * @param destination      where the player should land
+     * @param key              which command is triggering the teleport
+     * @param distanceOverride the distance to use for DISTANCE cost calculation
+     * @return the result (scheduled, denied, or immediate)
+     */
+    public TeleportResult requestTeleport(Player player,
+                                           Location destination,
+                                           CommandKey key,
+                                           int distanceOverride) {
+        return requestTeleportWithPayerInternal(player, player, destination, key,
+                Map.of(), distanceOverride);
+    }
+
+    /**
      * Low‑level teleport request with explicit extra placeholders for the
      * teleporting message.
      */
@@ -129,6 +149,22 @@ public final class TeleportService {
                                             Location destination,
                                             CommandKey key,
                                             Map<String, String> extraPlaceholders) {
+        return requestTeleportWithPayerInternal(mover, payer, destination, key,
+                extraPlaceholders, null);
+    }
+
+    /**
+     * Internal pipeline with optional distance override for cost calculation.
+     *
+     * @param distanceOverride if non-null and cost type is DISTANCE, use this
+     *                         value instead of the actual Euclidean distance
+     */
+    private TeleportResult requestTeleportWithPayerInternal(Player mover,
+                                            Player payer,
+                                            Location destination,
+                                            CommandKey key,
+                                            Map<String, String> extraPlaceholders,
+                                            @Nullable Integer distanceOverride) {
         CommandConfig cfg = plugin.getPluginConfig().commandConfig(key);
         if (cfg == null) {
             messageService.send(mover, "general.no-permission", Map.of());
@@ -203,7 +239,12 @@ public final class TeleportService {
 
         // ── 7. Cost check (payer) ──
         Location from = mover.getLocation();
-        int cost = costCalculator.calculate(cfg, from, dest);
+        int cost;
+        if (distanceOverride != null) {
+            cost = costCalculator.calculate(cfg, from, dest, distanceOverride);
+        } else {
+            cost = costCalculator.calculate(cfg, from, dest);
+        }
         if (hasBypass(payer, "cost", key)) {
             cost = 0;
         }
