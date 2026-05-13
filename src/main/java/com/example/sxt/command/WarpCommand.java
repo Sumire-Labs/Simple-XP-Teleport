@@ -51,8 +51,9 @@ public final class WarpCommand implements CommandExecutor {
             return true;
         }
 
-        if (args.length == 0) {
-            return false; // show usage
+        if (args.length != 1) {
+            msg.send(sender, "general.usage", Map.of("usage", command.getUsage()));
+            return true;
         }
 
         String warpName = args[0];
@@ -75,7 +76,8 @@ public final class WarpCommand implements CommandExecutor {
                     warp.x(), warp.y(), warp.z(),
                     warp.yaw(), warp.pitch());
 
-            teleportService.requestTeleport(player, dest, CommandKey.WARPX);
+            teleportService.requestTeleport(player, dest, CommandKey.WARPX,
+                    Map.of("warp", warpName));
         }, mainThread);
 
         return true;

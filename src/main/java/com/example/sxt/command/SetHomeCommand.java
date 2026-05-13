@@ -51,6 +51,11 @@ public final class SetHomeCommand implements CommandExecutor {
             return true;
         }
 
+        if (args.length > 1) {
+            msg.send(sender, "general.usage", Map.of("usage", command.getUsage()));
+            return true;
+        }
+
         String homeName = args.length > 0 ? args[0] : "home";
 
         if (!NAME_PATTERN.matcher(homeName).matches()) {

@@ -42,6 +42,11 @@ public final class DelHomeCommand implements CommandExecutor {
             return true;
         }
 
+        if (args.length > 1) {
+            msg.send(sender, "general.usage", Map.of("usage", command.getUsage()));
+            return true;
+        }
+
         String homeName = args.length > 0 ? args[0] : "home";
         var uuid = player.getUniqueId();
 

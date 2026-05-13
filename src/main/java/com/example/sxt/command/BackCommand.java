@@ -59,6 +59,11 @@ public final class BackCommand implements CommandExecutor {
             return true;
         }
 
+        if (args.length > 0) {
+            msg.send(sender, "general.usage", Map.of("usage", command.getUsage()));
+            return true;
+        }
+
         // ── Async DAO lookup ────────────────────────────────
         backLocationDao.find(player.getUniqueId())
                 .thenAcceptAsync(opt -> {

@@ -38,8 +38,9 @@ public final class TpaHereCommand implements CommandExecutor {
             return true;
         }
 
-        if (args.length < 1) {
-            return false;
+        if (args.length != 1) {
+            msg.send(sender, "general.usage", Map.of("usage", command.getUsage()));
+            return true;
         }
 
         String targetName = args[0];

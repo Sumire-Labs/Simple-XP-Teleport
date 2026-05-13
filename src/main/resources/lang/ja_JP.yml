@@ -11,6 +11,7 @@ general:
   reload-success: "<prefix><green>設定をリロードしました。</green>"
   debug-on: "<prefix><yellow>デバッグモードを有効にしました。</yellow>"
   debug-off: "<prefix><yellow>デバッグモードを無効にしました。</yellow>"
+  usage: "<prefix><reset>使い方: <yellow><usage></yellow></reset>"
 
 cost:
   not-enough-level: "<prefix><red>レベルが足りません。必要: <yellow><cost> Lv</yellow></red>"

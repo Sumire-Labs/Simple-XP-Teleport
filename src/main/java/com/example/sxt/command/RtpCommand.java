@@ -51,6 +51,11 @@ public final class RtpCommand implements CommandExecutor {
             return true;
         }
 
+        if (args.length > 1) {
+            msg.send(sender, "general.usage", Map.of("usage", command.getUsage()));
+            return true;
+        }
+
         // ── Determine target world ──────────────────────────
         World world;
         if (args.length > 0) {

@@ -40,6 +40,7 @@ public final class WarmupTask implements Runnable {
     private final int cost;
     private final Location startLocation;
     private final int totalTicks;
+    private final Map<String, String> extraPlaceholders;
     private int remainingTicks;
     private boolean cancelled;
     private BukkitTask bukkitTask;
@@ -51,7 +52,7 @@ public final class WarmupTask implements Runnable {
                       CommandKey key,
                       CommandConfig cfg,
                       int cost) {
-        this(plugin, teleportService, player, player, destination, key, cfg, cost);
+        this(plugin, teleportService, player, player, destination, key, cfg, cost, Map.of());
     }
 
     public WarmupTask(SimpleXpTeleportPlugin plugin,
@@ -62,6 +63,18 @@ public final class WarmupTask implements Runnable {
                       CommandKey key,
                       CommandConfig cfg,
                       int cost) {
+        this(plugin, teleportService, player, payer, destination, key, cfg, cost, Map.of());
+    }
+
+    public WarmupTask(SimpleXpTeleportPlugin plugin,
+                      TeleportService teleportService,
+                      Player player,
+                      Player payer,
+                      Location destination,
+                      CommandKey key,
+                      CommandConfig cfg,
+                      int cost,
+                      Map<String, String> extraPlaceholders) {
         this.plugin = plugin;
         this.teleportService = teleportService;
         this.messageService = plugin.getMessageService();
@@ -72,6 +85,7 @@ public final class WarmupTask implements Runnable {
         this.key = key;
         this.cfg = cfg;
         this.cost = cost;
+        this.extraPlaceholders = extraPlaceholders;
         this.startLocation = player.getLocation().clone();
         this.totalTicks = cfg.warmupSeconds() * 20;
         this.remainingTicks = totalTicks;
@@ -126,7 +140,7 @@ public final class WarmupTask implements Runnable {
             // Warmup complete — execute teleport
             cancelInternal(); // clean up task registration
             teleportService.executeTeleport(player, payer, destination, key,
-                    cfg, cost, startLocation);
+                    cfg, cost, startLocation, extraPlaceholders);
         }
     }
 

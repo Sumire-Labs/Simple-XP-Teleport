@@ -38,6 +38,11 @@ public final class TpaDenyCommand implements CommandExecutor {
             return true;
         }
 
+        if (args.length > 0) {
+            msg.send(sender, "general.usage", Map.of("usage", command.getUsage()));
+            return true;
+        }
+
         Optional<Pending> pendingOpt = teleportRequest.removePending(player.getUniqueId());
         if (pendingOpt.isEmpty()) {
             msg.send(player, "tpa.no-pending", Map.of());

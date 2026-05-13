@@ -45,8 +45,9 @@ public final class TpPosCommand implements CommandExecutor {
             return true;
         }
 
-        if (args.length < 3) {
-            return false; // let Bukkit show usage from plugin.yml
+        if (args.length < 3 || args.length > 4) {
+            msg.send(sender, "general.usage", Map.of("usage", command.getUsage()));
+            return true;
         }
 
         // ── Parse coordinates ───────────────────────────────

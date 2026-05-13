@@ -51,6 +51,11 @@ public final class HomeCommand implements CommandExecutor {
             return true;
         }
 
+        if (args.length > 1) {
+            msg.send(sender, "general.usage", Map.of("usage", command.getUsage()));
+            return true;
+        }
+
         String homeName = args.length > 0 ? args[0] : "home";
 
         homeDao.findOne(player.getUniqueId(), homeName).thenAcceptAsync(opt -> {
@@ -71,7 +76,8 @@ public final class HomeCommand implements CommandExecutor {
                     home.x(), home.y(), home.z(),
                     home.yaw(), home.pitch());
 
-            teleportService.requestTeleport(player, dest, CommandKey.HOMEX);
+            teleportService.requestTeleport(player, dest, CommandKey.HOMEX,
+                    Map.of("home", homeName));
         }, mainThread);
 
         return true;

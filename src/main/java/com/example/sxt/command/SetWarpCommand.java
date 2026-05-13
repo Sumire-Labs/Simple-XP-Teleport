@@ -49,8 +49,9 @@ public final class SetWarpCommand implements CommandExecutor {
             return true;
         }
 
-        if (args.length == 0) {
-            return false; // show usage
+        if (args.length != 1) {
+            msg.send(sender, "general.usage", Map.of("usage", command.getUsage()));
+            return true;
         }
 
         String warpName = args[0];

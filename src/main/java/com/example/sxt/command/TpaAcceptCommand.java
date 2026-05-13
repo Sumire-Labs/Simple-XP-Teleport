@@ -49,6 +49,11 @@ public final class TpaAcceptCommand implements CommandExecutor {
             return true;
         }
 
+        if (args.length > 0) {
+            msg.send(sender, "general.usage", Map.of("usage", command.getUsage()));
+            return true;
+        }
+
         Optional<Pending> pendingOpt = teleportRequest.getPending(player.getUniqueId());
         if (pendingOpt.isEmpty()) {
             msg.send(player, "tpa.no-pending", Map.of());
@@ -90,13 +95,17 @@ public final class TpaAcceptCommand implements CommandExecutor {
 
         if (pending.type() == Pending.Type.TPA) {
             // Requester teleports to target (player). Requester pays.
+            // <player> placeholder = target's name
             teleportService.requestTeleport(requester,
-                    player.getLocation(), CommandKey.TPAX);
+                    player.getLocation(), CommandKey.TPAX,
+                    Map.of("player", player.getName()));
         } else {
             // TPAHERE: target (player) teleports to requester.
             // Requester still pays cost and cooldown.
+            // <player> placeholder = requester's name (the player the mover is going to)
             teleportService.requestTeleportWithPayer(player, requester,
-                    requester.getLocation(), CommandKey.TPAHERE);
+                    requester.getLocation(), CommandKey.TPAHERE,
+                    Map.of("player", requester.getName()));
         }
 
         msg.send(player, "tpa.accepted", Map.of());

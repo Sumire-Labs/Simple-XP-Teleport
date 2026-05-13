@@ -78,9 +78,26 @@ public final class TeleportService {
      * @return the result (scheduled, denied, or immediate)
      */
     public TeleportResult requestTeleport(Player player,
-                                          Location destination,
-                                          CommandKey key) {
-        return requestTeleportWithPayer(player, player, destination, key);
+                                           Location destination,
+                                           CommandKey key) {
+        return requestTeleportWithPayer(player, player, destination, key, Map.of());
+    }
+
+    /**
+     * Initiate a teleport with additional context placeholders for the
+     * teleporting message (e.g. {@code "home" → "mybase"}, {@code "warp" → "spawn"}).
+     *
+     * @param player            the player to teleport (also pays cost and starts cooldown)
+     * @param destination       where the player should land
+     * @param key               which command is triggering the teleport
+     * @param extraPlaceholders additional replacements for the teleporting message
+     * @return the result (scheduled, denied, or immediate)
+     */
+    public TeleportResult requestTeleport(Player player,
+                                           Location destination,
+                                           CommandKey key,
+                                           Map<String, String> extraPlaceholders) {
+        return requestTeleportWithPayer(player, player, destination, key, extraPlaceholders);
     }
 
     /**
@@ -100,6 +117,18 @@ public final class TeleportService {
                                             Player payer,
                                             Location destination,
                                             CommandKey key) {
+        return requestTeleportWithPayer(mover, payer, destination, key, Map.of());
+    }
+
+    /**
+     * Low‑level teleport request with explicit extra placeholders for the
+     * teleporting message.
+     */
+    public TeleportResult requestTeleportWithPayer(Player mover,
+                                            Player payer,
+                                            Location destination,
+                                            CommandKey key,
+                                            Map<String, String> extraPlaceholders) {
         CommandConfig cfg = plugin.getPluginConfig().commandConfig(key);
         if (cfg == null) {
             messageService.send(mover, "general.no-permission", Map.of());
@@ -197,14 +226,14 @@ public final class TeleportService {
         // ── 8. Warmup (mover) ──
         if (cfg.warmupSeconds() > 0 && !hasBypass(mover, "warmup", key)) {
             WarmupTask task = new WarmupTask(plugin, this, mover, payer, dest,
-                    key, cfg, cost);
+                    key, cfg, cost, extraPlaceholders);
             activeWarmups.put(moverUuid, task);
             task.start();
             return new TeleportResult.Scheduled(cfg.warmupSeconds() * 20);
         }
 
         // No warmup — execute pipeline steps 9–11 immediately
-        executeTeleport(mover, payer, dest, key, cfg, cost, from);
+        executeTeleport(mover, payer, dest, key, cfg, cost, from, extraPlaceholders);
         return new TeleportResult.Immediate();
     }
 
@@ -222,7 +251,8 @@ public final class TeleportService {
      */
     void executeTeleport(Player mover, Player payer, Location dest,
                          CommandKey key, CommandConfig cfg, int cost,
-                         Location fromLocation) {
+                         Location fromLocation,
+                         Map<String, String> extraPlaceholders) {
         UUID moverUuid = mover.getUniqueId();
 
         // 9 ─ Consume cost from payer
@@ -242,6 +272,11 @@ public final class TeleportService {
                 activeWarmups.remove(moverUuid);
                 return;
             }
+            // Notify payer of consumed cost
+            String consumedKey = cfg.costMode() == CostMode.LEVEL
+                    ? "cost.consumed-level" : "cost.consumed-points";
+            messageService.send(payer, consumedKey,
+                    Map.of("cost", String.valueOf(cost)));
         }
 
         // 10 ─ Save back location for mover (skip BackLocationDao call for /backx)
@@ -276,8 +311,10 @@ public final class TeleportService {
 
                             // Send teleporting message to mover
                             String msgKey = commandMessagePrefix(key) + ".teleporting";
-                            messageService.send(mover, msgKey,
+                            Map<String, String> placeholders = new java.util.HashMap<>(
                                     teleportingPlaceholders(dest));
+                            placeholders.putAll(extraPlaceholders);
+                            messageService.send(mover, msgKey, placeholders);
 
                             // Audit log (async I/O inside AuditLogger)
                             if (plugin.getPluginConfig().isAuditLogEnabled()) {
