@@ -1,0 +1,71 @@
+# Simple XP Teleport - English messages (MiniMessage)
+# Placeholders: <player>, <target>, <cost>, <cooldown>, <warmup>,
+#               <distance>, <world>, <home>, <warp>, <x>, <y>, <z>, <count>, <max>
+
+prefix: "<gray>[<aqua>SXT</aqua>]</gray> "
+
+general:
+  no-permission: "<prefix><red>You don't have permission.</red>"
+  player-only: "<prefix><red>Only players can use this command.</red>"
+  player-not-found: "<prefix><red>Player <yellow><target></yellow> was not found.</red>"
+  reload-success: "<prefix><green>Configuration reloaded.</green>"
+  debug-on: "<prefix><yellow>Debug mode enabled.</yellow>"
+  debug-off: "<prefix><yellow>Debug mode disabled.</yellow>"
+
+cost:
+  not-enough-level: "<prefix><red>Not enough levels. Required: <yellow><cost> Lv</yellow></red>"
+  not-enough-points: "<prefix><red>Not enough experience. Required: <yellow><cost> pt</yellow></red>"
+  consumed-level: "<prefix><gray>Consumed <yellow><cost></yellow> levels.</gray>"
+  consumed-points: "<prefix><gray>Consumed <yellow><cost> pt</yellow> experience.</gray>"
+
+cooldown:
+  active: "<prefix><red>This command is on cooldown. Wait <yellow><cooldown></yellow> seconds.</red>"
+
+warmup:
+  start: "<prefix><aqua>Teleporting in <yellow><warmup></yellow> seconds... don't move.</aqua>"
+  cancelled-move: "<prefix><red>Teleport cancelled because you moved.</red>"
+  cancelled-damage: "<prefix><red>Teleport cancelled because you took damage.</red>"
+
+combat:
+  blocked: "<prefix><red>You cannot teleport while in combat (<yellow><cooldown></yellow> seconds left).</red>"
+
+safety:
+  unsafe-cancelled: "<prefix><red>Teleport cancelled because the destination is unsafe.</red>"
+  no-safe-location: "<prefix><red>No safe location was found nearby.</red>"
+
+world:
+  blacklisted: "<prefix><red>This teleport cannot be used in this world.</red>"
+  worldguard-denied: "<prefix><red>Teleporting is not allowed in this area.</red>"
+
+home:
+  teleporting: "<prefix><green>Teleporting to home <yellow><home></yellow>.</green>"
+  set: "<prefix><green>Set home <yellow><home></yellow>.</green>"
+  deleted: "<prefix><green>Deleted home <yellow><home></yellow>.</green>"
+  not-found: "<prefix><red>Home <yellow><home></yellow> does not exist.</red>"
+  limit-reached: "<prefix><red>You have reached the home limit (<count>/<max>).</red>"
+
+warp:
+  teleporting: "<prefix><green>Teleporting to warp <yellow><warp></yellow>.</green>"
+  set: "<prefix><green>Set warp <yellow><warp></yellow>.</green>"
+  deleted: "<prefix><green>Deleted warp <yellow><warp></yellow>.</green>"
+  not-found: "<prefix><red>Warp <yellow><warp></yellow> does not exist.</red>"
+
+tpa:
+  sent: "<prefix><green>Sent a teleport request to <target>.</green>"
+  received: "<prefix><yellow><player></yellow> sent you a teleport request 〈<click:run_command:'/tpacceptx'><hover:show_text:'Click to accept'><green>[Accept]</green></hover></click> <click:run_command:'/tpdenyx'><hover:show_text:'Click to deny'><red>[Deny]</red></hover></click>〉"
+  received-here: "<prefix><yellow><player></yellow> wants you to teleport to them 〈<click:run_command:'/tpacceptx'><green>[Accept]</green></click> <click:run_command:'/tpdenyx'><red>[Deny]</red></click>〉"
+  accepted: "<prefix><green>Request accepted.</green>"
+  denied: "<prefix><red>Request denied.</red>"
+  expired: "<prefix><gray>The teleport request expired.</gray>"
+  no-pending: "<prefix><red>You have no pending teleport request.</red>"
+
+rtp:
+  searching: "<prefix><aqua>Searching for a random location...</aqua>"
+  teleporting: "<prefix><green>Teleporting to <world> (<x>, <y>, <z>).</green>"
+
+tppos:
+  teleporting: "<prefix><green>Teleporting to (<x>, <y>, <z>) in <world>.</green>"
+
+back:
+  teleporting: "<prefix><green>Returning to your previous location.</green>"
+  no-previous: "<prefix><red>There is no previous location to return to.</red>"

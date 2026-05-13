@@ -1,0 +1,157 @@
+# Simple XP Teleport - config.yml
+# 各コマンドの cost / cooldown / warmup / combat / safety を機能ごとに設定可能
+
+language: ja_JP
+debug: false
+
+storage:
+  type: SQLITE
+  sqlite:
+    file: "data.db"
+
+home:
+  default-max-count: 3   # sxt.homes.max.<n> / sxt.homes.unlimited で上書き可
+
+# 戦闘タグ設定(PvPダメージで付与)
+combat-tag:
+  pvp-duration: 15       # 秒
+
+# ワールド制御
+worlds:
+  global-blacklist: []   # 全機能で禁止するワールド
+
+# パーティクル/サウンド演出(ウォームアップ中)
+effects:
+  enabled: true
+  particle: ENCHANTMENT_TABLE
+  warmup-sound: BLOCK_PORTAL_AMBIENT
+  start-sound: BLOCK_BEACON_ACTIVATE
+  success-sound: ENTITY_ENDERMAN_TELEPORT
+  cancel-sound: ENTITY_VILLAGER_NO
+
+# 監査ログ
+audit-log:
+  enabled: true
+  file: "logs/audit.log"
+
+# ────────────────────────────────────────────
+# 各コマンドの詳細設定
+# cost.mode:   LEVEL  | POINTS
+# cost.type:   FIXED  | DISTANCE
+# safety-check: NONE  | CANCEL | FIND_SAFE
+# ────────────────────────────────────────────
+
+commands:
+  homex:
+    cost:
+      mode: LEVEL
+      type: FIXED
+      amount: 1
+      cross-world-extra: 2
+    cooldown: 3            # 秒
+    warmup: 3              # 秒
+    cancel-on-move: true
+    cancel-on-damage: true
+    allow-in-combat: false
+    safety-check: NONE
+    blacklist-worlds: []
+
+  warpx:
+    cost:
+      mode: POINTS
+      type: DISTANCE
+      base: 10
+      per-block: 0.05
+      min: 20
+      max: 300
+      cross-world-extra: 200
+    cooldown: 5
+    warmup: 3
+    cancel-on-move: true
+    cancel-on-damage: true
+    allow-in-combat: false
+    safety-check: CANCEL
+    blacklist-worlds: []
+
+  tpax:
+    cost:
+      mode: LEVEL
+      type: FIXED
+      amount: 3
+      cross-world-extra: 2
+    cooldown: 10
+    warmup: 3
+    cancel-on-move: true
+    cancel-on-damage: true
+    allow-in-combat: false
+    safety-check: CANCEL
+    request-timeout: 60    # 秒
+    blacklist-worlds: []
+
+  tpahere:
+    cost:
+      mode: LEVEL
+      type: FIXED
+      amount: 3
+      cross-world-extra: 2
+    cooldown: 10
+    warmup: 3
+    cancel-on-move: true
+    cancel-on-damage: true
+    allow-in-combat: false
+    safety-check: CANCEL
+    request-timeout: 60
+    blacklist-worlds: []
+
+  rtpx:
+    cost:
+      mode: POINTS
+      type: DISTANCE
+      base: 50
+      per-block: 0.1
+      min: 100
+      max: 500
+      cross-world-extra: 200
+    cooldown: 60
+    warmup: 5
+    cancel-on-move: true
+    cancel-on-damage: true
+    allow-in-combat: false
+    safety-check: FIND_SAFE
+    safe-search-radius: 16
+    # ランダム範囲(中心: ワールドスポーン)
+    min-radius: 500
+    max-radius: 5000
+    max-attempts: 16
+    blacklist-worlds: ["world_nether", "world_the_end"]
+
+  tpposx:
+    cost:
+      mode: POINTS
+      type: DISTANCE
+      base: 20
+      per-block: 0.1
+      min: 50
+      max: 500
+      cross-world-extra: 200
+    cooldown: 30
+    warmup: 5
+    cancel-on-move: true
+    cancel-on-damage: true
+    allow-in-combat: false
+    safety-check: CANCEL
+    blacklist-worlds: []
+
+  backx:
+    cost:
+      mode: LEVEL
+      type: FIXED
+      amount: 1
+      cross-world-extra: 2
+    cooldown: 5
+    warmup: 0
+    cancel-on-move: false
+    cancel-on-damage: false
+    allow-in-combat: true   # 死亡直後の復帰用に許可
+    safety-check: CANCEL
+    blacklist-worlds: []

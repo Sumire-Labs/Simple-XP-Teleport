@@ -1,0 +1,173 @@
+name: SimpleXpTeleport
+version: '${version}'
+main: com.example.sxt.SimpleXpTeleportPlugin
+api-version: '1.21'
+authors: [YourName]
+softdepend: [PlaceholderAPI, WorldGuard]
+commands:
+  homex:
+    description: "homeへテレポート"
+    usage: "/homex [name]"
+    permission: sxt.use.homex
+  sethomex:
+    description: "現在位置をhomeとして登録"
+    usage: "/sethomex [name]"
+    permission: sxt.use.sethomex
+  delhomex:
+    description: "指定homeを削除"
+    usage: "/delhomex [name]"
+    permission: sxt.use.delhomex
+  warpx:
+    description: "warpへテレポート"
+    usage: "/warpx <name>"
+    permission: sxt.use.warpx
+  setwarpx:
+    description: "現在位置をwarpとして登録"
+    usage: "/setwarpx <name>"
+    permission: sxt.manage.warp
+  delwarpx:
+    description: "指定warpを削除"
+    usage: "/delwarpx <name>"
+    permission: sxt.manage.warp
+  tpax:
+    description: "対象プレイヤーへのTPリクエスト送信"
+    usage: "/tpax <player>"
+    permission: sxt.use.tpax
+  tpahere:
+    description: "対象プレイヤーを自分の所へ呼ぶリクエスト"
+    usage: "/tpahere <player>"
+    permission: sxt.use.tpahere
+  tpacceptx:
+    description: "直近のTPリクエストを承認"
+    usage: "/tpacceptx"
+    permission: sxt.use.tpacceptx
+  tpdenyx:
+    description: "直近のTPリクエストを拒否"
+    usage: "/tpdenyx"
+    permission: sxt.use.tpdenyx
+  rtpx:
+    description: "ランダム座標へテレポート"
+    usage: "/rtpx [world]"
+    permission: sxt.use.rtpx
+  tpposx:
+    description: "座標指定テレポート"
+    usage: "/tpposx <x> <y> <z> [world]"
+    permission: sxt.use.tpposx
+  backx:
+    description: "直前の位置に戻る"
+    usage: "/backx"
+    permission: sxt.use.backx
+  sxtadmin:
+    description: "Simple XP Teleport 管理コマンド"
+    usage: "/sxtadmin <reload|debug|...>"
+    permission: sxt.admin.*
+permissions:
+  sxt.use.homex:
+    description: "/homex 使用"
+    default: true
+  sxt.use.sethomex:
+    description: "/sethomex 使用"
+    default: true
+  sxt.use.delhomex:
+    description: "/delhomex 使用"
+    default: true
+  sxt.use.warpx:
+    description: "/warpx 使用"
+    default: true
+  sxt.use.tpax:
+    description: "/tpax 使用"
+    default: true
+  sxt.use.tpahere:
+    description: "/tpahere 使用"
+    default: true
+  sxt.use.tpacceptx:
+    description: "/tpacceptx 使用"
+    default: true
+  sxt.use.tpdenyx:
+    description: "/tpdenyx 使用"
+    default: true
+  sxt.use.rtpx:
+    description: "/rtpx 使用"
+    default: true
+  sxt.use.backx:
+    description: "/backx 使用"
+    default: true
+  sxt.use.tpposx:
+    description: "/tpposx 使用"
+    default: op
+  sxt.use.*:
+    description: "全使用権限"
+    default: op
+    children:
+      sxt.use.homex: true
+      sxt.use.sethomex: true
+      sxt.use.delhomex: true
+      sxt.use.warpx: true
+      sxt.use.tpax: true
+      sxt.use.tpahere: true
+      sxt.use.tpacceptx: true
+      sxt.use.tpdenyx: true
+      sxt.use.rtpx: true
+      sxt.use.backx: true
+      sxt.use.tpposx: true
+  sxt.manage.warp:
+    description: "warp の作成/削除"
+    default: op
+  sxt.manage.home.others:
+    description: "他人の home の閲覧/操作"
+    default: op
+  sxt.homes.max.<n>:
+    description: "home 所持上限を <n> に拡張"
+    default: false
+  sxt.homes.unlimited:
+    description: "home 無制限"
+    default: op
+  sxt.bypass.cooldown.<cmd>:
+    description: "指定コマンドのCDをバイパス"
+    default: op
+  sxt.bypass.cooldown.*:
+    description: "全コマンドCDバイパス"
+    default: op
+  sxt.bypass.warmup.<cmd>:
+    description: "指定コマンドのウォームアップをバイパス"
+    default: op
+  sxt.bypass.warmup.*:
+    description: "全コマンドウォームアップバイパス"
+    default: op
+  sxt.bypass.combat.<cmd>:
+    description: "戦闘中制限のバイパス"
+    default: op
+  sxt.bypass.combat.*:
+    description: "全戦闘中制限バイパス"
+    default: op
+  sxt.bypass.cost.<cmd>:
+    description: "XP消費のバイパス"
+    default: op
+  sxt.bypass.cost.*:
+    description: "全XP消費バイパス"
+    default: op
+  sxt.admin.reload:
+    description: "設定再読込"
+    default: op
+  sxt.admin.debug:
+    description: "デバッグ切替"
+    default: op
+  sxt.admin.*:
+    description: "全管理権限"
+    default: op
+    children:
+      sxt.admin.reload: true
+      sxt.admin.debug: true
+      sxt.manage.warp: true
+      sxt.manage.home.others: true
+  sxt.*:
+    description: "全権限"
+    default: op
+    children:
+      sxt.use.*: true
+      sxt.admin.*: true
+      sxt.homes.unlimited: true
+      sxt.bypass.cooldown.*: true
+      sxt.bypass.warmup.*: true
+      sxt.bypass.combat.*: true
+      sxt.bypass.cost.*: true

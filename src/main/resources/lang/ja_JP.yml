@@ -1,0 +1,71 @@
+# Simple XP Teleport - 日本語メッセージ(MiniMessage 形式)
+# プレースホルダ: <player>, <target>, <cost>, <cooldown>, <warmup>,
+#                <distance>, <world>, <home>, <warp>, <x>, <y>, <z>, <count>, <max>
+
+prefix: "<gray>[<aqua>SXT</aqua>]</gray> "
+
+general:
+  no-permission: "<prefix><red>権限がありません。</red>"
+  player-only: "<prefix><red>このコマンドはプレイヤーのみ実行できます。</red>"
+  player-not-found: "<prefix><red>プレイヤー <yellow><target></yellow> が見つかりません。</red>"
+  reload-success: "<prefix><green>設定をリロードしました。</green>"
+  debug-on: "<prefix><yellow>デバッグモードを有効にしました。</yellow>"
+  debug-off: "<prefix><yellow>デバッグモードを無効にしました。</yellow>"
+
+cost:
+  not-enough-level: "<prefix><red>レベルが足りません。必要: <yellow><cost> Lv</yellow></red>"
+  not-enough-points: "<prefix><red>経験値が足りません。必要: <yellow><cost> pt</yellow></red>"
+  consumed-level: "<prefix><gray>レベルを <yellow><cost></yellow> 消費しました。</gray>"
+  consumed-points: "<prefix><gray>経験値を <yellow><cost> pt</yellow> 消費しました。</gray>"
+
+cooldown:
+  active: "<prefix><red>クールダウン中です。あと <yellow><cooldown></yellow> 秒</red>"
+
+warmup:
+  start: "<prefix><aqua>テレポートまで <yellow><warmup></yellow> 秒…動かないでください。</aqua>"
+  cancelled-move: "<prefix><red>動いたためテレポートをキャンセルしました。</red>"
+  cancelled-damage: "<prefix><red>ダメージを受けたためキャンセルしました。</red>"
+
+combat:
+  blocked: "<prefix><red>戦闘中はテレポートできません(あと <yellow><cooldown></yellow> 秒)。</red>"
+
+safety:
+  unsafe-cancelled: "<prefix><red>着地点が危険なためキャンセルしました。</red>"
+  no-safe-location: "<prefix><red>近くに安全な場所が見つかりませんでした。</red>"
+
+world:
+  blacklisted: "<prefix><red>このワールドではこのテレポートは使用できません。</red>"
+  worldguard-denied: "<prefix><red>このエリアではテレポートは許可されていません。</red>"
+
+home:
+  teleporting: "<prefix><green>home <yellow><home></yellow> にテレポートします。</green>"
+  set: "<prefix><green>home <yellow><home></yellow> を設定しました。</green>"
+  deleted: "<prefix><green>home <yellow><home></yellow> を削除しました。</green>"
+  not-found: "<prefix><red>home <yellow><home></yellow> は存在しません。</red>"
+  limit-reached: "<prefix><red>home の上限に達しました(<count>/<max>)。</red>"
+
+warp:
+  teleporting: "<prefix><green>warp <yellow><warp></yellow> にテレポートします。</green>"
+  set: "<prefix><green>warp <yellow><warp></yellow> を設定しました。</green>"
+  deleted: "<prefix><green>warp <yellow><warp></yellow> を削除しました。</green>"
+  not-found: "<prefix><red>warp <yellow><warp></yellow> は存在しません。</red>"
+
+tpa:
+  sent: "<prefix><green><target></green> にTPリクエストを送信しました。"
+  received: "<prefix><yellow><player></yellow> からTPリクエスト 〈<click:run_command:'/tpacceptx'><hover:show_text:'クリックで承認'><green>[承認]</green></hover></click> <click:run_command:'/tpdenyx'><hover:show_text:'クリックで拒否'><red>[拒否]</red></hover></click>〉"
+  received-here: "<prefix><yellow><player></yellow> があなたを呼んでいます 〈<click:run_command:'/tpacceptx'><green>[承認]</green></click> <click:run_command:'/tpdenyx'><red>[拒否]</red></click>〉"
+  accepted: "<prefix><green>リクエストを承認しました。</green>"
+  denied: "<prefix><red>リクエストを拒否しました。</red>"
+  expired: "<prefix><gray>TPリクエストが期限切れになりました。</gray>"
+  no-pending: "<prefix><red>保留中のTPリクエストはありません。</red>"
+
+rtp:
+  searching: "<prefix><aqua>ランダム座標を探索中…</aqua>"
+  teleporting: "<prefix><green><world> (<x>, <y>, <z>) にテレポートします。</green>"
+
+tppos:
+  teleporting: "<prefix><green>(<x>, <y>, <z>) <world> にテレポートします。</green>"
+
+back:
+  teleporting: "<prefix><green>直前の位置に戻ります。</green>"
+  no-previous: "<prefix><red>戻れる位置がありません。</red>"
