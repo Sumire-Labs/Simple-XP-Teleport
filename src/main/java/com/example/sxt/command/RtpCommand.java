@@ -18,14 +18,15 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * /rtpx [world] — teleports the player to a random safe location.
+ * /rtpx &lt;min&gt; &lt;max&gt; &lt;world&gt; — teleports the player to a random safe location
+ * within the specified annular radius range.
  *
  * <p>The random location is found via {@link RandomLocationFinder} on the
  * <strong>main thread</strong> because the underlying
  * {@code World#getHighestBlockYAt} / {@code World#getBlockAt} API calls are
  * not thread-safe. Once a safe location is determined the teleport is
- * initiated through {@link TeleportService#requestTeleport} (also main-thread
- * only per §4.1).</p>
+ * initiated through {@link TeleportService#requestTeleport(Player, Location,
+ * CommandKey, int)} with distance override (also main-thread only per §4.1).</p>
  */
 public final class RtpCommand implements CommandExecutor {
 
@@ -51,36 +52,48 @@ public final class RtpCommand implements CommandExecutor {
             return true;
         }
 
-        if (args.length > 1) {
+        if (args.length != 3) {
             msg.send(sender, "general.usage", Map.of("usage", command.getUsage()));
             return true;
         }
 
+        // ── Parse min / max ─────────────────────────────────
+        int min;
+        int max;
+        try {
+            min = Integer.parseInt(args[0]);
+            max = Integer.parseInt(args[1]);
+        } catch (NumberFormatException e) {
+            msg.send(player, "rtp.invalid-range", Map.of());
+            return true;
+        }
+
+        if (min < 0 || max < min) {
+            msg.send(player, "rtp.invalid-range", Map.of());
+            return true;
+        }
+
         // ── Determine target world ──────────────────────────
-        World world;
-        if (args.length > 0) {
-            world = Bukkit.getWorld(args[0]);
-            if (world == null) {
-                msg.send(player, "world.not-found", Map.of("world", args[0]));
-                return true;
-            }
-        } else {
-            world = player.getWorld();
+        World world = Bukkit.getWorld(args[2]);
+        if (world == null) {
+            msg.send(player, "world.not-found", Map.of("world", args[2]));
+            return true;
         }
 
         // ── Send searching message immediately ──────────────
         msg.send(player, "rtp.searching", Map.of());
 
         // ── Find random location (main thread — World API is not thread-safe) ──
-        Optional<Location> opt = randomLocationFinder.find(world,
-                plugin.getPluginConfig().commandConfig(CommandKey.RTPX));
+        var config = plugin.getPluginConfig().commandConfig(CommandKey.RTPX);
+        Optional<Location> opt = randomLocationFinder.find(world, config, min, max);
 
         if (opt.isEmpty()) {
             msg.send(player, "safety.no-safe-location", Map.of());
             return true;
         }
 
-        teleportService.requestTeleport(player, opt.get(), CommandKey.RTPX);
+        // Distance override: cost is based on the specified max radius
+        teleportService.requestTeleport(player, opt.get(), CommandKey.RTPX, max);
         return true;
     }
 }

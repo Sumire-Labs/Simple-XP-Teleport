@@ -69,6 +69,7 @@ tpa:
 rtp:
   searching: "<prefix><aqua>ランダム座標を探索中…</aqua>"
   teleporting: "<prefix><green><world> (<x>, <y>, <z>) にテレポートします。</green>"
+  invalid-range: "<prefix><red>範囲は 0 以上の整数で max >= min を指定してください: /rtpx <min> <max> <world></red>"
 
 tppos:
   teleporting: "<prefix><green>(<x>, <y>, <z>) <world> にテレポートします。</green>"
