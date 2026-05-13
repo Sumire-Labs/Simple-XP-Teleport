@@ -36,6 +36,7 @@ public final class PluginConfig {
     private String cancelSound;
     private boolean auditLogEnabled;
     private String auditLogFile;
+    private boolean backRecordNonPluginTeleports;
     private Map<CommandKey, CommandConfig> commands;
 
     public PluginConfig(SimpleXpTeleportPlugin plugin) {
@@ -69,6 +70,7 @@ public final class PluginConfig {
     public String cancelSound()                    { return cancelSound; }
     public boolean isAuditLogEnabled()             { return auditLogEnabled; }
     public String auditLogFile()                   { return auditLogFile; }
+    public boolean isBackRecordNonPluginTeleports() { return backRecordNonPluginTeleports; }
     public Map<CommandKey, CommandConfig> commands() { return Collections.unmodifiableMap(commands); }
 
     // ── Convenience ─────────────────────────────────────────
@@ -108,6 +110,9 @@ public final class PluginConfig {
         // audit-log
         auditLogEnabled   = config.getBoolean("audit-log.enabled", true);
         auditLogFile      = config.getString("audit-log.file", "logs/audit.log");
+
+        // back
+        backRecordNonPluginTeleports = config.getBoolean("back.record-non-plugin-teleports", false);
 
         // commands
         commands = new EnumMap<>(CommandKey.class);

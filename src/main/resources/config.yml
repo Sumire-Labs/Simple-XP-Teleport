@@ -34,6 +34,10 @@ audit-log:
   enabled: true
   file: "logs/audit.log"
 
+# /backx 挙動オプション
+back:
+  record-non-plugin-teleports: false  # エンダーパール/コーラスフルーツ/他プラグインのテレポートもback位置として記録するか
+
 # ────────────────────────────────────────────
 # 各コマンドの詳細設定
 # cost.mode:   LEVEL  | POINTS

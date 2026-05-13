@@ -36,6 +36,7 @@ safety:
 world:
   blacklisted: "<prefix><red>This teleport cannot be used in this world.</red>"
   worldguard-denied: "<prefix><red>Teleporting is not allowed in this area.</red>"
+  not-found: "<prefix><red>World <yellow><world></yellow> not found.</red>"
 
 home:
   teleporting: "<prefix><green>Teleporting to home <yellow><home></yellow>.</green>"
@@ -43,12 +44,15 @@ home:
   deleted: "<prefix><green>Deleted home <yellow><home></yellow>.</green>"
   not-found: "<prefix><red>Home <yellow><home></yellow> does not exist.</red>"
   limit-reached: "<prefix><red>You have reached the home limit (<count>/<max>).</red>"
+  invalid-name: "<prefix><red>Home name must be 1-32 characters using A-Z, a-z, 0-9, underscore, or hyphen.</red>"
+  world-not-found: "<prefix><red>World <yellow><world></yellow> not found.</red>"
 
 warp:
   teleporting: "<prefix><green>Teleporting to warp <yellow><warp></yellow>.</green>"
   set: "<prefix><green>Set warp <yellow><warp></yellow>.</green>"
   deleted: "<prefix><green>Deleted warp <yellow><warp></yellow>.</green>"
   not-found: "<prefix><red>Warp <yellow><warp></yellow> does not exist.</red>"
+  world-not-found: "<prefix><red>World <yellow><world></yellow> not found.</red>"
 
 tpa:
   sent: "<prefix><green>Sent a teleport request to <target>.</green>"
@@ -58,6 +62,7 @@ tpa:
   denied: "<prefix><red>Request denied.</red>"
   expired: "<prefix><gray>The teleport request expired.</gray>"
   no-pending: "<prefix><red>You have no pending teleport request.</red>"
+  teleporting: "<prefix><green>Teleporting to <player>.</green>"
 
 rtp:
   searching: "<prefix><aqua>Searching for a random location...</aqua>"
@@ -65,7 +70,17 @@ rtp:
 
 tppos:
   teleporting: "<prefix><green>Teleporting to (<x>, <y>, <z>) in <world>.</green>"
+  invalid-coordinates: "<prefix><red>Coordinates must be numbers.</red>"
+  y-out-of-range: "<prefix><red>Y coordinate is out of range. Must be between <yellow><min></yellow> and <yellow><max></yellow>.</red>"
 
 back:
   teleporting: "<prefix><green>Returning to your previous location.</green>"
   no-previous: "<prefix><red>There is no previous location to return to.</red>"
+
+admin:
+  home-list-header: "<prefix><green><player>'s homes (<count>):</green>"
+  home-list-empty: "<prefix><yellow><player> has no homes.</yellow>"
+  home-list-entry: "<prefix>  <yellow><home></yellow> - <world> (<x>, <y>, <z>)"
+  home-deleted: "<prefix><green>Deleted <player>'s home <yellow><home></yellow>.</green>"
+  home-not-found: "<prefix><red><player>'s home <yellow><home></yellow> does not exist.</red>"
+  home-teleported: "<prefix><green>Teleported to <player>'s home <yellow><home></yellow>.</green>"

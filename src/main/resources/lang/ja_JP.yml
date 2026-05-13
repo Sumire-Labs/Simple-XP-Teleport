@@ -36,6 +36,7 @@ safety:
 world:
   blacklisted: "<prefix><red>このワールドではこのテレポートは使用できません。</red>"
   worldguard-denied: "<prefix><red>このエリアではテレポートは許可されていません。</red>"
+  not-found: "<prefix><red>ワールド <yellow><world></yellow> が見つかりません。</red>"
 
 home:
   teleporting: "<prefix><green>home <yellow><home></yellow> にテレポートします。</green>"
@@ -43,12 +44,15 @@ home:
   deleted: "<prefix><green>home <yellow><home></yellow> を削除しました。</green>"
   not-found: "<prefix><red>home <yellow><home></yellow> は存在しません。</red>"
   limit-reached: "<prefix><red>home の上限に達しました(<count>/<max>)。</red>"
+  invalid-name: "<prefix><red>home 名は半角英数字、アンダースコア、ハイフンの 1〜32 文字で指定してください。</red>"
+  world-not-found: "<prefix><red>ワールド <yellow><world></yellow> が見つかりません。</red>"
 
 warp:
   teleporting: "<prefix><green>warp <yellow><warp></yellow> にテレポートします。</green>"
   set: "<prefix><green>warp <yellow><warp></yellow> を設定しました。</green>"
   deleted: "<prefix><green>warp <yellow><warp></yellow> を削除しました。</green>"
   not-found: "<prefix><red>warp <yellow><warp></yellow> は存在しません。</red>"
+  world-not-found: "<prefix><red>ワールド <yellow><world></yellow> が見つかりません。</red>"
 
 tpa:
   sent: "<prefix><green><target></green> にTPリクエストを送信しました。"
@@ -58,6 +62,7 @@ tpa:
   denied: "<prefix><red>リクエストを拒否しました。</red>"
   expired: "<prefix><gray>TPリクエストが期限切れになりました。</gray>"
   no-pending: "<prefix><red>保留中のTPリクエストはありません。</red>"
+  teleporting: "<prefix><green><player> の位置にテレポートします。</green>"
 
 rtp:
   searching: "<prefix><aqua>ランダム座標を探索中…</aqua>"
@@ -65,7 +70,17 @@ rtp:
 
 tppos:
   teleporting: "<prefix><green>(<x>, <y>, <z>) <world> にテレポートします。</green>"
+  invalid-coordinates: "<prefix><red>座標は数値で指定してください。</red>"
+  y-out-of-range: "<prefix><red>Y座標が範囲外です。<yellow><min></yellow>〜<yellow><max></yellow> で指定してください。</red>"
 
 back:
   teleporting: "<prefix><green>直前の位置に戻ります。</green>"
   no-previous: "<prefix><red>戻れる位置がありません。</red>"
+
+admin:
+  home-list-header: "<prefix><green><player> のhome一覧 (<count>件):</green>"
+  home-list-empty: "<prefix><yellow><player> にはhomeがありません。</yellow>"
+  home-list-entry: "<prefix>  <yellow><home></yellow> - <world> (<x>, <y>, <z>)"
+  home-deleted: "<prefix><green><player> の home <yellow><home></yellow> を削除しました。</green>"
+  home-not-found: "<prefix><red><player> の home <yellow><home></yellow> は存在しません。</red>"
+  home-teleported: "<prefix><green><player> の home <yellow><home></yellow> にテレポートしました。</green>"
