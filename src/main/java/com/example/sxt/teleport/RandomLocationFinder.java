@@ -36,9 +36,27 @@ public final class RandomLocationFinder {
      *         all attempts are exhausted
      */
     public Optional<Location> find(World world, CommandConfig config) {
+        return find(world, config, config.minRadius(), config.maxRadius());
+    }
+
+    /**
+     * Like {@link #find(World, CommandConfig)} but overrides the radius range
+     * with explicit {@code minRadius} / {@code maxRadius} values.
+     *
+     * <p>Used by /rtpx when the player specifies a custom search range at
+     * command invocation. Config values for {@code safeSearchRadius} and
+     * {@code maxAttempts} are still honoured.</p>
+     *
+     * @param world    the target world
+     * @param config   the command configuration
+     * @param minRadius minimum radius (inclusive) from spawn
+     * @param maxRadius maximum radius (inclusive) from spawn
+     * @return the first safe location found, or {@link Optional#empty()} when
+     *         all attempts are exhausted
+     */
+    public Optional<Location> find(World world, CommandConfig config,
+                                   int minRadius, int maxRadius) {
         Location center = world.getSpawnLocation();
-        int minRadius = config.minRadius();
-        int maxRadius = config.maxRadius();
         int maxAttempts = config.maxAttempts();
         int safeSearchRadius = config.safeSearchRadius();
 
