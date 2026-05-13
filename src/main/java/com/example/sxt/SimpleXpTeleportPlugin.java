@@ -14,19 +14,32 @@ import com.example.sxt.command.TpaDenyCommand;
 import com.example.sxt.command.TpaHereCommand;
 import com.example.sxt.command.WarpCommand;
 import com.example.sxt.command.admin.SxtAdminCommand;
+import com.example.sxt.config.PluginConfig;
 import com.example.sxt.hook.PlaceholderApiHook;
 import com.example.sxt.hook.WorldGuardHook;
+import com.example.sxt.message.LangLoader;
+import com.example.sxt.message.MessageService;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class SimpleXpTeleportPlugin extends JavaPlugin {
+    private PluginConfig pluginConfig;
+    private LangLoader langLoader;
+    private MessageService messageService;
     private PlaceholderApiHook placeholderApiHook;
     private WorldGuardHook worldGuardHook;
 
     @Override
     public void onEnable() {
-        saveDefaultConfig();
+        pluginConfig = new PluginConfig(this);
+        getLogger().info("Config loaded: " + pluginConfig.commands().size() + " command configs");
+
+        langLoader = new LangLoader(this);
+        langLoader.load(pluginConfig.language());
+        messageService = new MessageService(this, langLoader);
+        getLogger().info("Language loaded: " + pluginConfig.language());
+
         getLogger().info("Simple XP Teleport skeleton is loading.");
 
         registerCommand("homex", new HomeCommand(this));
@@ -55,6 +68,18 @@ public final class SimpleXpTeleportPlugin extends JavaPlugin {
         }
 
         getLogger().info("Simple XP Teleport skeleton enabled.");
+    }
+
+    public PluginConfig getPluginConfig() {
+        return pluginConfig;
+    }
+
+    public LangLoader getLangLoader() {
+        return langLoader;
+    }
+
+    public MessageService getMessageService() {
+        return messageService;
     }
 
     @Override
