@@ -25,10 +25,14 @@ dependencies {
     implementation("org.xerial:sqlite-jdbc:3.50.3.0")
     compileOnly("me.clip:placeholderapi:2.12.2")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.16")
+    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.15")
     testImplementation("org.junit.jupiter:junit-jupiter:6.0.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.3")
     testImplementation("org.mockito:mockito-core:5.14.2")
     testImplementation("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+    testImplementation("me.clip:placeholderapi:2.12.2")
+    testImplementation("com.sk89q.worldguard:worldguard-bukkit:7.0.16")
+    testImplementation("com.sk89q.worldedit:worldedit-bukkit:7.2.15")
 }
 
 tasks {
