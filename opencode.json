@@ -1,0 +1,41 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "build",
+  "agent": {
+    "build": {
+      "description": "Primary orchestrator. Delegates implementation to coder and exploration to explore.",
+      "mode": "primary",
+      "model": "openai/gpt-5.5",
+      "prompt": "{file:./prompts/orchestrator.txt}",
+      "temperature": 0.2,
+      "reasoningEffort": "high",
+      "permission": {
+        "edit": "deny",
+        "write": "deny",
+        "apply_patch": "deny",
+        "bash": "deny",
+        "task": {
+          "*": "deny",
+          "coder": "allow",
+          "explore": "allow"
+        }
+      }
+    },
+    "coder": {
+      "description": "実装担当。具体的な実装タスクが発生したら必ず呼び出す",
+      "mode": "subagent",
+      "model": "deepseek/deepseek-v4-pro",
+      "prompt": "{file:./prompts/coder.txt}",
+      "temperature": 0.1,
+      "permission": {
+        "edit": "allow",
+        "write": "allow",
+        "apply_patch": "allow",
+        "bash": "allow"
+      }
+    },
+    "explore": {
+      "mode": "subagent"
+    }
+  }
+}
