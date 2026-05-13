@@ -85,3 +85,4 @@ admin:
   home-deleted: "<prefix><green><player> の home <yellow><home></yellow> を削除しました。</green>"
   home-not-found: "<prefix><red><player> の home <yellow><home></yellow> は存在しません。</red>"
   home-teleported: "<prefix><green><player> の home <yellow><home></yellow> にテレポートしました。</green>"
+  unknown-subcommand: "<prefix><red>不明なサブコマンドです: <yellow><sub></yellow>。もしかして <yellow><suggest></yellow> ですか？</red>"

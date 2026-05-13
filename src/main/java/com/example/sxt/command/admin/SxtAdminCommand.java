@@ -14,8 +14,13 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -25,7 +30,7 @@ import java.util.logging.Level;
 /**
  * /sxtadmin reload | debug | home &lt;player&gt; list | home &lt;player&gt; delete &lt;name&gt; | home &lt;player&gt; tp &lt;name&gt;
  */
-public final class SxtAdminCommand implements CommandExecutor {
+public final class SxtAdminCommand implements CommandExecutor, TabCompleter {
 
     private final SimpleXpTeleportPlugin plugin;
     private final MessageService msg;
@@ -46,20 +51,28 @@ public final class SxtAdminCommand implements CommandExecutor {
                              @NotNull String[] args) {
 
         if (args.length == 0) {
-            return false; // show usage
+            msg.send(sender, "general.usage", Map.of("usage", command.getUsage()));
+            return true;
         }
 
         String sub = args[0].toLowerCase();
 
         if ("home".equals(sub)) {
-            return handleHome(sender, args);
+            return handleHome(sender, command, args);
         }
 
-        return switch (sub) {
-            case "reload" -> handleReload(sender);
-            case "debug"  -> handleDebug(sender);
-            default       -> false;
-        };
+        if ("reload".equals(sub)) return handleReload(sender);
+        if ("debug".equals(sub))  return handleDebug(sender);
+
+        // Typo suggestion for unknown subcommand
+        String suggestion = closestSubcommand(sub);
+        if (suggestion != null) {
+            msg.send(sender, "admin.unknown-subcommand",
+                    Map.of("sub", args[0], "suggest", suggestion));
+        } else {
+            msg.send(sender, "general.usage", Map.of("usage", command.getUsage()));
+        }
+        return true;
     }
 
     private boolean handleReload(CommandSender sender) {
@@ -78,10 +91,12 @@ public final class SxtAdminCommand implements CommandExecutor {
 
     // ── home subcommands ─────────────────────────────────────
 
-    private boolean handleHome(CommandSender sender, String[] args) {
+    private boolean handleHome(CommandSender sender, Command command, String[] args) {
         // /sxtadmin home <player> <list|delete|tp> [name]
         if (args.length < 3) {
-            return false;
+            msg.send(sender, "general.usage",
+                    Map.of("usage", "/sxtadmin home <player> <list|delete|tp> [name]"));
+            return true;
         }
 
         if (!sender.hasPermission("sxt.manage.home.others")) {
@@ -92,21 +107,33 @@ public final class SxtAdminCommand implements CommandExecutor {
         String targetName = args[1];
         String sub = args[2].toLowerCase();
 
-        return switch (sub) {
-            case "list" -> {
-                if (args.length != 3) yield false;
-                yield handleHomeList(sender, targetName);
-            }
-            case "delete" -> {
-                if (args.length != 4) yield false;
-                yield handleHomeDelete(sender, targetName, args[3]);
-            }
-            case "tp" -> {
-                if (args.length != 4) yield false;
-                yield handleHomeTp(sender, targetName, args[3]);
-            }
-            default -> false;
-        };
+        switch (sub) {
+            case "list":
+                if (args.length != 3) {
+                    msg.send(sender, "general.usage",
+                            Map.of("usage", "/sxtadmin home <player> list"));
+                    return true;
+                }
+                return handleHomeList(sender, targetName);
+            case "delete":
+                if (args.length != 4) {
+                    msg.send(sender, "general.usage",
+                            Map.of("usage", "/sxtadmin home <player> delete <name>"));
+                    return true;
+                }
+                return handleHomeDelete(sender, targetName, args[3]);
+            case "tp":
+                if (args.length != 4) {
+                    msg.send(sender, "general.usage",
+                            Map.of("usage", "/sxtadmin home <player> tp <name>"));
+                    return true;
+                }
+                return handleHomeTp(sender, targetName, args[3]);
+            default:
+                msg.send(sender, "general.usage",
+                        Map.of("usage", "/sxtadmin home <player> <list|delete|tp> [name]"));
+                return true;
+        }
     }
 
     private boolean handleHomeList(CommandSender sender, String targetName) {
@@ -248,5 +275,99 @@ public final class SxtAdminCommand implements CommandExecutor {
                 });
 
         return true;
+    }
+
+    // ── Tab completion ────────────────────────────────────────
+
+    private static final List<String> SUBCOMMANDS = List.of("reload", "debug", "home");
+    private static final List<String> HOME_SUBCOMMANDS = List.of("list", "delete", "tp");
+
+    @Override
+    @Nullable
+    public List<String> onTabComplete(@NotNull CommandSender sender,
+                                      @NotNull Command command,
+                                      @NotNull String label,
+                                      @NotNull String[] args) {
+        if (args.length == 1) {
+            String partial = args[0].toLowerCase();
+            List<String> matches = new ArrayList<>();
+            for (String sub : SUBCOMMANDS) {
+                if (sub.startsWith(partial)) {
+                    matches.add(sub);
+                }
+            }
+            // Typo tolerance: if no prefix match, suggest based on edit distance ≤ 2
+            if (matches.isEmpty() && !partial.isEmpty()) {
+                String closest = closestSubcommand(partial);
+                if (closest != null) {
+                    matches.add(closest);
+                }
+            }
+            return matches;
+        }
+
+        if (args.length >= 2 && "home".equalsIgnoreCase(args[0])) {
+            if (args.length == 3) {
+                String partial = args[2].toLowerCase();
+                List<String> matches = new ArrayList<>();
+                for (String sub : HOME_SUBCOMMANDS) {
+                    if (sub.startsWith(partial)) {
+                        matches.add(sub);
+                    }
+                }
+                return matches;
+            }
+            // args.length == 2: suggest online player names
+            if (args.length == 2 && sender.hasPermission("sxt.manage.home.others")) {
+                String partial = args[1].toLowerCase();
+                List<String> names = new ArrayList<>();
+                for (org.bukkit.entity.Player online : org.bukkit.Bukkit.getOnlinePlayers()) {
+                    if (online.getName().toLowerCase().startsWith(partial)) {
+                        names.add(online.getName());
+                    }
+                }
+                return names;
+            }
+        }
+
+        return List.of();
+    }
+
+    // ── Typo suggestion (Levenshtein distance) ────────────────
+
+    /** Return the closest subcommand for {@code input} if Levenshtein distance ≤ 2, else null. */
+    @Nullable
+    private static String closestSubcommand(String input) {
+        String lower = input.toLowerCase();
+        String best = null;
+        int bestDist = Integer.MAX_VALUE;
+        for (String candidate : SUBCOMMANDS) {
+            int dist = levenshtein(lower, candidate);
+            if (dist < bestDist) {
+                bestDist = dist;
+                best = candidate;
+            }
+        }
+        return bestDist <= 2 ? best : null;
+    }
+
+    /** Compute Levenshtein edit distance between two strings. */
+    private static int levenshtein(String a, String b) {
+        int n = a.length(), m = b.length();
+        if (n == 0) return m;
+        if (m == 0) return n;
+        int[][] d = new int[n + 1][m + 1];
+        for (int i = 0; i <= n; i++) d[i][0] = i;
+        for (int j = 0; j <= m; j++) d[0][j] = j;
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                int cost = a.charAt(i - 1) == b.charAt(j - 1) ? 0 : 1;
+                d[i][j] = Math.min(
+                        Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1),
+                        d[i - 1][j - 1] + cost
+                );
+            }
+        }
+        return d[n][m];
     }
 }

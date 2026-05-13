@@ -85,3 +85,4 @@ admin:
   home-deleted: "<prefix><green>Deleted <player>'s home <yellow><home></yellow>.</green>"
   home-not-found: "<prefix><red><player>'s home <yellow><home></yellow> does not exist.</red>"
   home-teleported: "<prefix><green>Teleported to <player>'s home <yellow><home></yellow>.</green>"
+  unknown-subcommand: "<prefix><red>Unknown subcommand: <yellow><sub></yellow>. Did you mean <yellow><suggest></yellow>?</red>"
