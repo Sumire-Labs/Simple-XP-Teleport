@@ -1,5 +1,5 @@
 # Simple XP Teleport - English messages (MiniMessage)
-# Placeholders: <player>, <target>, <cost>, <cooldown>, <warmup>,
+# Placeholders: <player>, <target>, <cost>, <cooldown>, <warmup>, <seconds>,
 #               <distance>, <world>, <home>, <warp>, <x>, <y>, <z>, <count>, <max>
 
 prefix: "<gray>[<aqua>SXT</aqua>]</gray> "
@@ -24,6 +24,7 @@ cooldown:
 
 warmup:
   start: "<prefix><aqua>Teleporting in <yellow><warmup></yellow> seconds... don't move.</aqua>"
+  countdown: "<prefix><aqua>Teleporting in <yellow><seconds></yellow> seconds</aqua>"
   cancelled-move: "<prefix><red>Teleport cancelled because you moved.</red>"
   cancelled-damage: "<prefix><red>Teleport cancelled because you took damage.</red>"
 

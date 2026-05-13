@@ -1,5 +1,5 @@
 # Simple XP Teleport - 日本語メッセージ(MiniMessage 形式)
-# プレースホルダ: <player>, <target>, <cost>, <cooldown>, <warmup>,
+# プレースホルダ: <player>, <target>, <cost>, <cooldown>, <warmup>, <seconds>,
 #                <distance>, <world>, <home>, <warp>, <x>, <y>, <z>, <count>, <max>
 
 prefix: "<gray>[<aqua>SXT</aqua>]</gray> "
@@ -24,6 +24,7 @@ cooldown:
 
 warmup:
   start: "<prefix><aqua>テレポートまで <yellow><warmup></yellow> 秒…動かないでください。</aqua>"
+  countdown: "<prefix><aqua>テレポートまで <yellow><seconds></yellow> 秒</aqua>"
   cancelled-move: "<prefix><red>動いたためテレポートをキャンセルしました。</red>"
   cancelled-damage: "<prefix><red>ダメージを受けたためキャンセルしました。</red>"
 

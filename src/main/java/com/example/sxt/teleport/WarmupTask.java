@@ -136,6 +136,11 @@ public final class WarmupTask implements Runnable {
         }
 
         remainingTicks--;
+        if (remainingTicks > 0 && remainingTicks % 20 == 0) {
+            int seconds = remainingTicks / 20;
+            messageService.send(player, "warmup.countdown",
+                    Map.of("seconds", String.valueOf(seconds)));
+        }
         if (remainingTicks <= 0) {
             // Warmup complete — execute teleport
             cancelInternal(); // clean up task registration
