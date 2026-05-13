@@ -31,7 +31,11 @@
         "edit": "allow",
         "write": "allow",
         "apply_patch": "allow",
-        "bash": "allow"
+        "bash": {
+          "rm -rf *": "ask",
+          "git push --force*": "ask",
+          "*": "allow"
+        }
       }
     },
     "explore": {
