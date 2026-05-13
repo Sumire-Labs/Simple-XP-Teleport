@@ -2,21 +2,21 @@
 
 ## 0. Context & Goal
 
-Paper サーバー(Minecraft 1.21〜1.21.11, Java 21)向けのテレポートプラグイン `SimpleXpTeleport` を実装する。プレイヤーが経験値(レベル or 総経験値ポイント)を消費して、home / warp / TPA / random TP / 座標指定 TP / back を実行できる汎用テレポートシステムを提供する。運営者が機能ごとにコスト・クールダウン・ウォームアップ・戦闘制限・安全チェックを設定可能とし、SQLite で永続化、MiniMessage で多言語(ja_JP / en_US)対応する。
+Paper サーバー(Minecraft 1.21.x、Java 21)向けのテレポートプラグイン `SimpleXpTeleport` を実装する。ビルドと開発サーバーは Paper 1.21.8 を基準とし、`api-version: '1.21'` の範囲で 1.21 系互換を維持する。プレイヤーが経験値(レベル or 総経験値ポイント)を消費して、home / warp / TPA / random TP / 座標指定 TP / back を実行できる汎用テレポートシステムを提供する。運営者が機能ごとにコスト・クールダウン・ウォームアップ・戦闘制限・安全チェックを設定可能とし、SQLite で永続化、MiniMessage で多言語(ja_JP / en_US)対応する。
 
 ---
 
 ## 1. Tech Stack & Constraints
 
 - 言語: **Java 21** (Temurin 21、`--release 21` でコンパイル)
-- 対象サーバー: **Paper 1.21.4** をビルド対象とし、`api-version: '1.21'` で 1.21〜1.21.11 をサポート対象とする <!-- inferred -->
-- ビルドツール: **Gradle 8.10** (Kotlin DSL) + **Gradle Wrapper 同梱** <!-- inferred -->
-- プラグイン: `io.papermc.paperweight.userdev` **1.7.7**, `xyz.jpenilla.run-paper` **2.3.1** <!-- inferred -->
+- 対象サーバー: **Paper 1.21.8** をビルド/開発サーバー基準とし、`api-version: '1.21'` で Minecraft 1.21.x 互換を維持する
+- ビルドツール: **Gradle 8.14.5** (Kotlin DSL) + **Gradle Wrapper 同梱** (`distribution-type all`)
+- プラグイン: `com.gradleup.shadow` **8.3.10**, `xyz.jpenilla.run-paper` **3.0.2**
 - パッケージルート: `com.example.sxt`
 - プラグイン名: `SimpleXpTeleport` / プラグインバージョン: `1.0.0`
-- データ保存: **SQLite** (`org.xerial:sqlite-jdbc:3.46.1.0`) — 単一ファイル `plugins/SimpleXpTeleport/data.db`
+- データ保存: **SQLite** (`org.xerial:sqlite-jdbc:3.50.3.0`, `implementation`, Shadow jar に同梱) — 単一ファイル `plugins/SimpleXpTeleport/data.db`
 - メッセージ整形: **MiniMessage** (Paper API 内包の Adventure を使用、追加依存なし)
-- ソフト依存: **PlaceholderAPI 2.11.6**, **WorldGuard 7.0.11** (どちらも `compileOnly`、未導入でもプラグインは起動可)
+- ソフト依存: **PlaceholderAPI 2.12.2**, **WorldGuard 7.0.16** (どちらも `compileOnly`、未導入でもプラグインは起動可)
 - 対応 OS: Paper が動作する全 OS (Linux / macOS / Windows)
 - 文字コード: ファイル全て **UTF-8 (BOM なし)**、改行 **LF**
 - 禁止事項:
@@ -25,6 +25,8 @@ Paper サーバー(Minecraft 1.21〜1.21.11, Java 21)向けのテレポートプ
   - リフレクションによる Paper 内部 API 呼び出し禁止
   - メインスレッドでの I/O (SQLite 含む) ブロッキング禁止 — DB 操作は `Bukkit.getScheduler().runTaskAsynchronously` で実行し、結果の Bukkit API 操作は同期スケジューラへ戻す
   - `null` を返す可能性のある public API は `Optional<T>` を返す
+  - Paper API / Bukkit API / サーバー同梱 Adventure API は `compileOnly` とし、Shadow jar に含めない
+  - SQLite JDBC などサーバーが提供しない実行時依存のみ `implementation` とし、必要に応じて `relocate` する
 - ロガー名: `SimpleXpTeleport` (Bukkit が自動付与)
 
 ---
@@ -363,89 +365,18 @@ WorldGuard 未導入の場合はフックを完全にスキップする。
 
 ---
 
-## 5. Implementation Steps
+## 5. Remaining Implementation Steps
 
-### Step 1 — Gradle プロジェクト骨格の作成
+環境構築、Gradle/Wrapper 設定、`plugin.yml` のコマンド/権限定義、各コマンドクラスの空骨格、`SimpleXpTeleportPlugin` からの手動コマンド登録は完了済み。以降は既存ファイルを実装して、空実装を機能実装へ置き換える。
 
-**Goal**: ビルドが通る空のプラグインを作成する。
-
-**Files to touch**:
-- `[CREATE] settings.gradle.kts`
-- `[CREATE] build.gradle.kts`
-- `[CREATE] gradle.properties`
-- `[CREATE] gradle/wrapper/gradle-wrapper.properties` (Gradle 8.10)
-- `[CREATE] src/main/resources/plugin.yml` (空に近い最小内容)
-- `[CREATE] src/main/java/com/example/sxt/SimpleXpTeleportPlugin.java` (空の `onEnable`/`onDisable`)
-
-`build.gradle.kts`:
-
-```kotlin
-plugins {
-    java
-    id("io.papermc.paperweight.userdev") version "1.7.7"
-    id("xyz.jpenilla.run-paper") version "2.3.1"
-}
-
-group = "com.example.sxt"
-version = "1.0.0"
-
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-}
-
-repositories {
-    mavenCentral()
-    maven("https://repo.papermc.io/repository/maven-public/")
-    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
-    maven("https://maven.enginehub.org/repo/")
-}
-
-dependencies {
-    paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")
-    implementation("org.xerial:sqlite-jdbc:3.46.1.0")
-    compileOnly("me.clip:placeholderapi:2.11.6")
-    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.11")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.3")
-}
-
-tasks {
-    test { useJUnitPlatform() }
-    runServer { minecraftVersion("1.21.4") }
-    assemble { dependsOn(reobfJar) }
-    processResources {
-        filesMatching("plugin.yml") {
-            expand("version" to project.version)
-        }
-    }
-}
-```
-
-**Acceptance**: `./gradlew build` がエラーなく完了する。`build/libs/simple-xp-teleport-1.0.0.jar` が生成される。
-
----
-
-### Step 2 — plugin.yml と全コマンド/権限の登録
-
-**Goal**: コマンド/権限を `plugin.yml` に宣言。各コマンドの `CommandExecutor` は空実装で OK。
-
-**Files to touch**:
-- `[EDIT] src/main/resources/plugin.yml`
-- `[CREATE]` §2 の `command/*.java` 全ファイル(空骨格、`onCommand` は `return true;`)
-
-`plugin.yml` の `commands:` と `permissions:` は §3(原仕様)と §4(原仕様)の表に従い全項目を列挙する。`softdepend: [PlaceholderAPI, WorldGuard]` を明記。
-
-**Acceptance**: Paper サーバーへ jar を投入してプラグインが `Enabled` ログを出す。各コマンドが `/help` で見える。
-
----
-
-### Step 3 — Config 読み込み
+### Step 1 — Config 読み込み
 
 **Goal**: `config.yml` を §5(原仕様)通りにロードし、`PluginConfig` と `CommandConfig` を保持する。
 
 **Files to touch**:
-- `[CREATE] src/main/resources/config.yml` (§5 をそのまま使用)
-- `[CREATE] src/main/java/com/example/sxt/config/PluginConfig.java`
-- `[CREATE] src/main/java/com/example/sxt/config/CommandConfig.java`
+- `[EDIT] src/main/resources/config.yml`
+- `[EDIT] src/main/java/com/example/sxt/config/PluginConfig.java`
+- `[EDIT] src/main/java/com/example/sxt/config/CommandConfig.java`
 
 `PluginConfig` は以下を保持: `language`, `debug`, `storageFile`, `defaultMaxHomes`, `combatTagPvpDuration`, `globalBlacklistWorlds`, `effects(enabled,Particle,Sound x4)`, `auditLogEnabled`, `auditLogFile`, `Map<CommandKey, CommandConfig> commands`.
 
@@ -455,15 +386,15 @@ tasks {
 
 ---
 
-### Step 4 — メッセージサービス (MiniMessage + lang)
+### Step 2 — メッセージサービス (MiniMessage + lang)
 
 **Goal**: `MessageService.send(CommandSender, "home.set", Map.of("home","mybase"))` で MiniMessage を解決して送信できる。
 
 **Files to touch**:
-- `[CREATE] src/main/resources/lang/ja_JP.yml` (§6 と同一)
-- `[CREATE] src/main/resources/lang/en_US.yml` (同じキー構造で英訳)
-- `[CREATE] src/main/java/com/example/sxt/message/LangLoader.java`
-- `[CREATE] src/main/java/com/example/sxt/message/MessageService.java`
+- `[EDIT] src/main/resources/lang/ja_JP.yml`
+- `[EDIT] src/main/resources/lang/en_US.yml`
+- `[EDIT] src/main/java/com/example/sxt/message/LangLoader.java`
+- `[EDIT] src/main/java/com/example/sxt/message/MessageService.java`
 
 仕様:
 - `LangLoader` は `data folder/lang/<language>.yml` を優先し、無ければ jar 内同名を `saveResource` で展開してから読み込む。
@@ -488,16 +419,16 @@ general:
 
 ---
 
-### Step 5 — SQLite 接続と DAO 実装
+### Step 3 — SQLite 接続と DAO 実装
 
 **Goal**: `homes` / `warps` / `back_locations` の CRUD を非同期で提供。
 
 **Files to touch**:
-- `[CREATE] src/main/java/com/example/sxt/data/DatabaseManager.java`
-- `[CREATE] src/main/java/com/example/sxt/data/dao/HomeDao.java`
-- `[CREATE] src/main/java/com/example/sxt/data/dao/WarpDao.java`
-- `[CREATE] src/main/java/com/example/sxt/data/dao/BackLocationDao.java`
-- `[CREATE] src/main/java/com/example/sxt/data/model/*.java`
+- `[EDIT] src/main/java/com/example/sxt/data/DatabaseManager.java`
+- `[EDIT] src/main/java/com/example/sxt/data/dao/HomeDao.java`
+- `[EDIT] src/main/java/com/example/sxt/data/dao/WarpDao.java`
+- `[EDIT] src/main/java/com/example/sxt/data/dao/BackLocationDao.java`
+- `[EDIT] src/main/java/com/example/sxt/data/model/*.java`
 
 要件:
 - `DatabaseManager.connect()` はプラグイン有効化時に同期で 1 度だけ実行し、上記 PRAGMA とテーブル DDL を流す。
@@ -512,15 +443,15 @@ general:
 
 ---
 
-### Step 6 — Cost 計算と XP ユーティリティ
+### Step 4 — Cost 計算と XP ユーティリティ
 
 **Goal**: §4.2 の式どおりに `CostCalculator` を実装し、`XpUtil` で正確にレベル/ポイントを増減できる。
 
 **Files to touch**:
-- `[CREATE] src/main/java/com/example/sxt/cost/CostMode.java`
-- `[CREATE] src/main/java/com/example/sxt/cost/CostType.java`
-- `[CREATE] src/main/java/com/example/sxt/cost/CostCalculator.java`
-- `[CREATE] src/main/java/com/example/sxt/cost/XpUtil.java`
+- `[EDIT] src/main/java/com/example/sxt/cost/CostMode.java`
+- `[EDIT] src/main/java/com/example/sxt/cost/CostType.java`
+- `[EDIT] src/main/java/com/example/sxt/cost/CostCalculator.java`
+- `[EDIT] src/main/java/com/example/sxt/cost/XpUtil.java`
 
 `XpUtil` の `getTotalExperience` は Minecraft の式に従う:
 - レベル `L` までの総 XP:
@@ -537,15 +468,15 @@ general:
 
 ---
 
-### Step 7 — Cooldown / CombatTag / Safety / RandomLocation
+### Step 5 — Cooldown / CombatTag / Safety / RandomLocation
 
 **Goal**: 4 つのマネージャを実装。
 
 **Files to touch**:
-- `[CREATE] src/main/java/com/example/sxt/teleport/CooldownManager.java`
-- `[CREATE] src/main/java/com/example/sxt/teleport/CombatTagManager.java`
-- `[CREATE] src/main/java/com/example/sxt/teleport/SafetyChecker.java`
-- `[CREATE] src/main/java/com/example/sxt/teleport/RandomLocationFinder.java`
+- `[EDIT] src/main/java/com/example/sxt/teleport/CooldownManager.java`
+- `[EDIT] src/main/java/com/example/sxt/teleport/CombatTagManager.java`
+- `[EDIT] src/main/java/com/example/sxt/teleport/SafetyChecker.java`
+- `[EDIT] src/main/java/com/example/sxt/teleport/RandomLocationFinder.java`
 
 要件:
 - `CooldownManager`: `Map<UUID, Map<CommandKey, Long>>` で各最終実行時刻 epoch ms を保持。`remainingSeconds(player, key, configSec)` を提供。bypass パーミッション `sxt.bypass.cooldown.<cmd>` or `sxt.bypass.cooldown.*` を持つ場合は 0 を返す。
@@ -562,18 +493,18 @@ general:
 
 ---
 
-### Step 8 — TeleportService(統合パイプライン)
+### Step 6 — TeleportService(統合パイプライン)
 
 **Goal**: テレポート前の全チェックとウォームアップ・コスト消費・実行・back 記録を一元化。
 
 **Files to touch**:
-- `[CREATE] src/main/java/com/example/sxt/teleport/TeleportRequest.java`
-- `[CREATE] src/main/java/com/example/sxt/teleport/WarmupTask.java`
-- `[CREATE] src/main/java/com/example/sxt/teleport/TeleportService.java`
-- `[CREATE] src/main/java/com/example/sxt/listener/PlayerMoveListener.java`
-- `[CREATE] src/main/java/com/example/sxt/listener/EntityDamageListener.java`
-- `[CREATE] src/main/java/com/example/sxt/listener/PlayerTeleportListener.java`
-- `[CREATE] src/main/java/com/example/sxt/listener/PlayerDeathListener.java`
+- `[EDIT] src/main/java/com/example/sxt/teleport/TeleportRequest.java`
+- `[EDIT] src/main/java/com/example/sxt/teleport/WarmupTask.java`
+- `[EDIT] src/main/java/com/example/sxt/teleport/TeleportService.java`
+- `[EDIT] src/main/java/com/example/sxt/listener/PlayerMoveListener.java`
+- `[EDIT] src/main/java/com/example/sxt/listener/EntityDamageListener.java`
+- `[EDIT] src/main/java/com/example/sxt/listener/PlayerTeleportListener.java`
+- `[EDIT] src/main/java/com/example/sxt/listener/PlayerDeathListener.java`
 
 パイプライン (順序固定):
 
@@ -598,7 +529,7 @@ general:
 
 ---
 
-### Step 9 — Home / Warp 系コマンド実装
+### Step 7 — Home / Warp 系コマンド実装
 
 **Goal**: §3(原仕様)の home / warp 関連コマンドを `TeleportService` 経由で完成させる。
 
@@ -617,7 +548,7 @@ general:
 
 ---
 
-### Step 10 — TPA 系コマンド
+### Step 8 — TPA 系コマンド
 
 **Goal**: `/tpax`, `/tpahere`, `/tpacceptx`, `/tpdenyx` を実装。
 
@@ -635,7 +566,7 @@ general:
 
 ---
 
-### Step 11 — RTP / TPPOS / Back コマンド
+### Step 9 — RTP / TPPOS / Back コマンド
 
 **Goal**: 残り 3 コマンドを実装。
 
@@ -649,7 +580,7 @@ general:
 
 ---
 
-### Step 12 — /sxtadmin と Listener 仕上げ
+### Step 10 — /sxtadmin と Listener 仕上げ
 
 **Goal**: 管理コマンドと残るリスナーを完成。
 
@@ -664,11 +595,11 @@ general:
 
 ---
 
-### Step 13 — PlaceholderAPI / WorldGuard フック
+### Step 11 — PlaceholderAPI / WorldGuard フック
 
 **Goal**: それぞれの導入時のみ機能を有効化。未導入なら警告なくスキップ。
 
-**Files to touch**: `hook/PlaceholderApiHook.java`, `hook/WorldGuardHook.java`.
+**Files to touch**: `hook/PlaceholderApiHook.java`, `hook/WorldGuardHook.java`, `SimpleXpTeleportPlugin.java`.
 
 - `onEnable` で `Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null` の場合のみ `new PlaceholderApiHook(this).register()` を呼ぶ。
 - WorldGuard のフラグ登録は `onLoad` フェーズで `WorldGuard.getInstance().getFlagRegistry().register(...)` を行う必要があるため、`SimpleXpTeleportPlugin.onLoad()` から `WorldGuardHook.tryRegisterFlag()` を呼ぶ。
@@ -677,7 +608,7 @@ general:
 
 ---
 
-### Step 14 — AuditLogger / DebugLogger
+### Step 12 — AuditLogger / DebugLogger
 
 **Goal**: 監査ログとデバッグログを実装。
 
@@ -690,11 +621,11 @@ general:
 
 ---
 
-### Step 15 — テスト整備 & 仕上げ
+### Step 13 — テスト整備 & 仕上げ
 
 **Goal**: §6 のテストを通し、`./gradlew build` を成功させる。
 
-**Files to touch**: `src/test/java/...`, `README.md`.
+**Files to touch**: `src/test/java/...`.
 
 - `CostCalculatorTest`: §4.2 の 4 シナリオを検証。
 - `XpUtilTest`: Bukkit `Player` をモック (Mockito) し、レベル/XP 計算を検証。
@@ -706,7 +637,7 @@ general:
 
 ## 6. Test Plan
 
-### 6.1 単体テスト (JUnit 5)
+### 6.1 単体テスト (JUnit Platform / JUnit Jupiter 6.0.3)
 
 | ID | Given | When | Then |
 |---|---|---|---|
@@ -736,19 +667,17 @@ general:
 
 ### 6.3 E2E (Smoke)
 
-- Paper 1.21.4 サーバーで `./gradlew runServer` を起動、OP プレイヤーで上記 I-1〜I-11 を順に確認できる。
+- Paper 1.21.8 サーバーで `./gradlew runServer` を起動、OP プレイヤーで上記 I-1〜I-11 を順に確認できる。
 - PlaceholderAPI 未導入でもプラグインが `Enabled` ログを出す。
 
 ---
 
 ## 7. Definition of Done
 
-- [ ] `./gradlew build` が警告以外エラーなく完了する。
-- [ ] `build/libs/simple-xp-teleport-1.0.0.jar` が生成される。
+- [ ] `./gradlew clean build` が警告以外エラーなく完了する。
 - [ ] `./gradlew test` で全 JUnit テストが green。
 - [ ] `./gradlew runServer` でサーバー起動、`Enabled` ログが出る。
 - [ ] §3 の全コマンドが `/help` から見え、それぞれが §6 の I-1〜I-11 を満たす。
-- [ ] `plugin.yml` に §4(原仕様)の全権限が宣言されている。
 - [ ] `config.yml` をプラグインフォルダから手動編集 → `/sxtadmin reload` で反映される。
 - [ ] `lang/ja_JP.yml` と `lang/en_US.yml` が同じキー集合を持ち、`language` 設定で切替可能。
 - [ ] PlaceholderAPI / WorldGuard を未導入の環境でも例外なく起動する。
