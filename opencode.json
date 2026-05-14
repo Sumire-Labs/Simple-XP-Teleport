@@ -17,7 +17,10 @@
         "task": {
           "*": "deny",
           "coder": "allow",
-          "explore": "allow"
+          "explore": "allow",
+          "reviewer": "allow",
+          "test-runner": "allow",
+          "doc-writer": "allow"
         }
       }
     },
@@ -39,7 +42,35 @@
       }
     },
     "explore": {
-      "mode": "subagent"
+      "description": "コード調査・探索担当。実装方針を決める前のコードベース把握、依存関係の追跡、既存実装の特定などに必ず呼び出す。書き込みは行わない読み取り専用エージェント。",
+      "mode": "subagent",
+      "model": "anthropic/claude-haiku-4-5",
+      "prompt": "{file:./prompts/explore.txt}",
+      "temperature": 0.1,
+      "permission": {
+        "edit": "deny",
+        "write": "deny",
+        "apply_patch": "deny",
+        "bash": {
+          "ls*": "allow",
+          "cat*": "allow",
+          "find*": "allow",
+          "grep*": "allow",
+          "rg*": "allow",
+          "fd*": "allow",
+          "tree*": "allow",
+          "wc*": "allow",
+          "head*": "allow",
+          "tail*": "allow",
+          "git log*": "allow",
+          "git diff*": "allow",
+          "git show*": "allow",
+          "git blame*": "allow",
+          "git status*": "allow",
+          "git ls-files*": "allow",
+          "*": "deny"
+        }
+      }
     }
   }
 }
