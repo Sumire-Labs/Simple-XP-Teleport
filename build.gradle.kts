@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.example.sxt"
-version = "1.3.0"
+version = "1.3.1"
 
 val pluginVersion = version.toString()
 
