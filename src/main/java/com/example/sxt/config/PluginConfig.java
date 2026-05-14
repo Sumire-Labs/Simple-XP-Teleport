@@ -37,6 +37,10 @@ public final class PluginConfig {
     private boolean auditLogEnabled;
     private String auditLogFile;
     private boolean backRecordNonPluginTeleports;
+    private int waypointsMaxPerPlayer;
+    private boolean waypointsShareEnabled;
+    private int waypointsShareExpireSeconds;
+    private boolean waypointsShareChargeOnAccept;
     private Map<CommandKey, CommandConfig> commands;
 
     public PluginConfig(SimpleXpTeleportPlugin plugin) {
@@ -71,6 +75,32 @@ public final class PluginConfig {
     public boolean isAuditLogEnabled()             { return auditLogEnabled; }
     public String auditLogFile()                   { return auditLogFile; }
     public boolean isBackRecordNonPluginTeleports() { return backRecordNonPluginTeleports; }
+
+    /**
+     * Maximum number of waypoints a single player can create.
+     * Default: 10
+     */
+    public int waypointsMaxPerPlayer() { return waypointsMaxPerPlayer; }
+
+    /**
+     * Whether waypoint sharing between players is enabled.
+     * Default: true
+     */
+    public boolean isWaypointsShareEnabled() { return waypointsShareEnabled; }
+
+    /**
+     * Expiry time in seconds for waypoint share requests.
+     * Default: 60
+     */
+    public int waypointsShareExpireSeconds() { return waypointsShareExpireSeconds; }
+
+    /**
+     * If true, the player who accepts a shared waypoint also pays the XP cost
+     * for teleporting to it. If false, only the requester pays.
+     * Default: false
+     */
+    public boolean isWaypointsShareChargeOnAccept() { return waypointsShareChargeOnAccept; }
+
     public Map<CommandKey, CommandConfig> commands() { return Collections.unmodifiableMap(commands); }
 
     // ── Convenience ─────────────────────────────────────────
@@ -113,6 +143,12 @@ public final class PluginConfig {
 
         // back
         backRecordNonPluginTeleports = config.getBoolean("back.record-non-plugin-teleports", false);
+
+        // waypoints
+        waypointsMaxPerPlayer       = config.getInt("waypoints.max-per-player", 10);
+        waypointsShareEnabled       = config.getBoolean("waypoints.share.enabled", true);
+        waypointsShareExpireSeconds = config.getInt("waypoints.share.expire-seconds", 60);
+        waypointsShareChargeOnAccept= config.getBoolean("waypoints.share.charge-on-accept", false);
 
         // commands
         commands = new EnumMap<>(CommandKey.class);
@@ -209,6 +245,7 @@ public final class PluginConfig {
             case "tpahere" -> CommandKey.TPAHERE;
             case "rtpx"    -> CommandKey.RTPX;
             case "tpposx"  -> CommandKey.TPPOSX;
+            case "wayx"    -> CommandKey.WAYX;
             case "backx"   -> CommandKey.BACKX;
             default        -> null;
         };

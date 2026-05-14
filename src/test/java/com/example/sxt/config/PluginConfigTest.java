@@ -147,4 +147,48 @@ class PluginConfigTest {
         assertEquals(5000, cfg.maxRadius());
         assertEquals(16, cfg.maxAttempts());
     }
+
+    // ── waypoint section tests ───────────────────────────────
+
+    @Test
+    void shouldLoadWaypointDefaults() {
+        YamlConfiguration yaml = new YamlConfiguration(); // empty config
+
+        PluginConfig config = new PluginConfig(plugin, yaml);
+        assertEquals(10, config.waypointsMaxPerPlayer(), "Default max-per-player should be 10");
+        assertTrue(config.isWaypointsShareEnabled(), "Default share.enabled should be true");
+        assertEquals(60, config.waypointsShareExpireSeconds(), "Default share.expire-seconds should be 60");
+        assertFalse(config.isWaypointsShareChargeOnAccept(), "Default share.charge-on-accept should be false");
+    }
+
+    @Test
+    void shouldLoadWaypointCustomValues() {
+        YamlConfiguration yaml = new YamlConfiguration();
+        yaml.set("waypoints.max-per-player", 20);
+        yaml.set("waypoints.share.enabled", false);
+        yaml.set("waypoints.share.expire-seconds", 120);
+        yaml.set("waypoints.share.charge-on-accept", true);
+
+        PluginConfig config = new PluginConfig(plugin, yaml);
+        assertEquals(20, config.waypointsMaxPerPlayer());
+        assertFalse(config.isWaypointsShareEnabled());
+        assertEquals(120, config.waypointsShareExpireSeconds());
+        assertTrue(config.isWaypointsShareChargeOnAccept());
+    }
+
+    @Test
+    void shouldLoadWayxCommandConfig() {
+        YamlConfiguration yaml = new YamlConfiguration();
+        yaml.set("commands.wayx.cost.mode", "POINTS");
+        yaml.set("commands.wayx.cost.type", "FIXED");
+        yaml.set("commands.wayx.cost.amount", 5);
+
+        PluginConfig config = new PluginConfig(plugin, yaml);
+
+        CommandConfig wayxCfg = config.commands().get(CommandKey.WAYX);
+        assertNotNull(wayxCfg, "wayx config should be present");
+        assertEquals(5, wayxCfg.amount(), "wayx cost amount should be 5");
+        assertEquals(CostMode.POINTS, wayxCfg.costMode());
+        assertEquals(CostType.FIXED, wayxCfg.costType());
+    }
 }

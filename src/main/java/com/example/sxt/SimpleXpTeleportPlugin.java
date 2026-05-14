@@ -13,16 +13,20 @@ import com.example.sxt.command.TpaCommand;
 import com.example.sxt.command.TpaDenyCommand;
 import com.example.sxt.command.TpaHereCommand;
 import com.example.sxt.command.WarpCommand;
+import com.example.sxt.command.WayxCommand;
 import com.example.sxt.command.admin.SxtAdminCommand;
 import com.example.sxt.config.PluginConfig;
 import com.example.sxt.data.DatabaseManager;
 import com.example.sxt.data.dao.BackLocationDao;
 import com.example.sxt.data.dao.HomeDao;
 import com.example.sxt.data.dao.WarpDao;
+import com.example.sxt.data.dao.WaypointDao;
 import com.example.sxt.hook.PlaceholderApiHook;
 import com.example.sxt.hook.WorldGuardHook;
 import com.example.sxt.gui.WarpGuiListener;
 import com.example.sxt.gui.WarpGuiService;
+import com.example.sxt.gui.WaypointGuiListener;
+import com.example.sxt.gui.WaypointGuiService;
 import com.example.sxt.listener.EntityDamageListener;
 import com.example.sxt.listener.PlayerDeathListener;
 import com.example.sxt.listener.PlayerMoveListener;
@@ -35,6 +39,7 @@ import com.example.sxt.teleport.RandomLocationFinder;
 import com.example.sxt.teleport.SafetyChecker;
 import com.example.sxt.teleport.TeleportRequest;
 import com.example.sxt.teleport.TeleportService;
+import com.example.sxt.teleport.WaypointShareRequest;
 import com.example.sxt.util.DebugLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
@@ -48,6 +53,7 @@ public final class SimpleXpTeleportPlugin extends JavaPlugin {
     private DatabaseManager databaseManager;
     private HomeDao homeDao;
     private WarpDao warpDao;
+    private WaypointDao waypointDao;
     private BackLocationDao backLocationDao;
     private PlaceholderApiHook placeholderApiHook;
     private WorldGuardHook worldGuardHook;
@@ -57,7 +63,9 @@ public final class SimpleXpTeleportPlugin extends JavaPlugin {
     private RandomLocationFinder randomLocationFinder;
     private TeleportService teleportService;
     private TeleportRequest teleportRequest;
+    private WaypointShareRequest waypointShareRequest;
     private WarpGuiService warpGuiService;
+    private WaypointGuiService waypointGuiService;
     private DebugLogger debugLogger;
 
     @Override
@@ -91,6 +99,7 @@ public final class SimpleXpTeleportPlugin extends JavaPlugin {
         }
         homeDao = new HomeDao(databaseManager);
         warpDao = new WarpDao(databaseManager);
+        waypointDao = new WaypointDao(databaseManager);
         backLocationDao = new BackLocationDao(databaseManager);
 
         cooldownManager = new CooldownManager(this);
@@ -101,7 +110,11 @@ public final class SimpleXpTeleportPlugin extends JavaPlugin {
         teleportRequest = new TeleportRequest(this);
         teleportRequest.startCleanupTask();
 
+        waypointShareRequest = new WaypointShareRequest(this);
+        waypointShareRequest.startCleanupTask();
+
         warpGuiService = new WarpGuiService(this);
+        waypointGuiService = new WaypointGuiService(this);
         debugLogger = new DebugLogger(this);
 
         // Register listeners
@@ -116,6 +129,8 @@ public final class SimpleXpTeleportPlugin extends JavaPlugin {
                 new PlayerTeleportListener(this), this);
         getServer().getPluginManager().registerEvents(
                 new WarpGuiListener(this, warpGuiService), this);
+        getServer().getPluginManager().registerEvents(
+                new WaypointGuiListener(this, waypointGuiService), this);
 
         getLogger().info("Simple XP Teleport skeleton is loading.");
 
@@ -134,6 +149,7 @@ public final class SimpleXpTeleportPlugin extends JavaPlugin {
         registerCommand("tpposx", new TpPosCommand(this));
         registerCommand("backx", new BackCommand(this));
         registerCommand("sxtadmin", new SxtAdminCommand(this));
+        registerCommand("wayx", new WayxCommand(this));
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             placeholderApiHook = new PlaceholderApiHook(this);
@@ -175,6 +191,10 @@ public final class SimpleXpTeleportPlugin extends JavaPlugin {
         return warpDao;
     }
 
+    public WaypointDao getWaypointDao() {
+        return waypointDao;
+    }
+
     public BackLocationDao getBackLocationDao() {
         return backLocationDao;
     }
@@ -203,6 +223,10 @@ public final class SimpleXpTeleportPlugin extends JavaPlugin {
         return teleportRequest;
     }
 
+    public WaypointShareRequest getWaypointShareRequest() {
+        return waypointShareRequest;
+    }
+
     public PlaceholderApiHook getPlaceholderApiHook() {
         return placeholderApiHook;
     }
@@ -213,6 +237,10 @@ public final class SimpleXpTeleportPlugin extends JavaPlugin {
 
     public WarpGuiService getWarpGuiService() {
         return warpGuiService;
+    }
+
+    public WaypointGuiService getWaypointGuiService() {
+        return waypointGuiService;
     }
 
     public DebugLogger getDebugLogger() {

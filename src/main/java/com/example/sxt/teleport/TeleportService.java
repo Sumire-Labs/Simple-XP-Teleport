@@ -420,6 +420,7 @@ public final class TeleportService {
             case TPAX, TPAHERE -> "tpa";
             case RTPX -> "rtp";
             case TPPOSX -> "tppos";
+            case WAYX -> "waypoint";
             case BACKX -> "back";
         };
     }

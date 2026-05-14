@@ -38,6 +38,14 @@ audit-log:
 back:
   record-non-plugin-teleports: false  # エンダーパール/コーラスフルーツ/他プラグインのテレポートもback位置として記録するか
 
+# ウェイポイント機能
+waypoints:
+  max-per-player: 10          # 1プレイヤーあたりの最大ウェイポイント数
+  share:
+    enabled: true            # 共有機能の有効/無効
+    expire-seconds: 60       # 共有リクエストの有効期限(秒)
+    charge-on-accept: false  # 共有承認時に受諾者にもXPコストを課すか
+
 # ────────────────────────────────────────────
 # 各コマンドの詳細設定
 # cost.mode:   LEVEL  | POINTS
@@ -146,16 +154,30 @@ commands:
     safety-check: NONE
     blacklist-worlds: []
 
-  backx:
-    cost:
-      mode: LEVEL
-      type: FIXED
-      amount: 1
-      cross-world-extra: 2
-    cooldown: 5
-    warmup: 0
-    cancel-on-move: false
-    cancel-on-damage: false
-    allow-in-combat: true   # 死亡直後の復帰用に許可
-    safety-check: NONE
-    blacklist-worlds: []
+   backx:
+     cost:
+       mode: LEVEL
+       type: FIXED
+       amount: 1
+       cross-world-extra: 2
+     cooldown: 5
+     warmup: 0
+     cancel-on-move: false
+     cancel-on-damage: false
+     allow-in-combat: true   # 死亡直後の復帰用に許可
+     safety-check: NONE
+     blacklist-worlds: []
+
+   wayx:
+     cost:
+       mode: LEVEL
+       type: FIXED
+       amount: 2
+       cross-world-extra: 3
+     cooldown: 3
+     warmup: 2
+     cancel-on-move: true
+     cancel-on-damage: true
+     allow-in-combat: false
+     safety-check: NONE
+     blacklist-worlds: []

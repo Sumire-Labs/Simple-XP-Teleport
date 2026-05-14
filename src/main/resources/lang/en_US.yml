@@ -1,6 +1,6 @@
 # Simple XP Teleport - English messages (MiniMessage)
 # Placeholders: <player>, <target>, <cost>, <cooldown>, <warmup>, <seconds>,
-#               <distance>, <world>, <home>, <warp>, <x>, <y>, <z>, <count>, <max>
+#               <distance>, <world>, <home>, <warp>, <waypoint>, <x>, <y>, <z>, <count>, <max>
 
 prefix: "<gray>[<aqua>SXT</aqua>]</gray> "
 
@@ -79,6 +79,46 @@ warp:
     delete-success: "<prefix><green>Deleted warp <yellow><warp></yellow>.</green>"
     pending-timeout: "<prefix><red>Warp creation timed out.</red>"
     teleported-admin: "<prefix><green>Teleported to warp <yellow><warp></yellow> (admin).</green>"
+
+waypoint:
+  teleporting: "<prefix><green>Teleporting to waypoint <yellow><waypoint></yellow>.</green>"
+  added: "<prefix><green>Added waypoint <yellow><waypoint></yellow>.</green>"
+  deleted: "<prefix><green>Deleted waypoint <yellow><waypoint></yellow>.</green>"
+  not-found: "<prefix><red>Waypoint <yellow><waypoint></yellow> does not exist.</red>"
+  limit-reached: "<prefix><red>You have reached the waypoint limit (<count>/<max>).</red>"
+  invalid-name: "<prefix><red>Waypoint name must be 1-32 characters using A-Z, a-z, 0-9, underscore, or hyphen.</red>"
+  world-not-found: "<prefix><red>World <yellow><world></yellow> not found.</red>"
+  share:
+    disabled: "<prefix><red>Waypoint sharing is disabled.</red>"
+    sent: "<prefix><green>Sent waypoint <yellow><waypoint></yellow> share request to <target>.</green>"
+    received: "<prefix><yellow><player></yellow> shared waypoint <yellow><waypoint></yellow> with you 〈<click:run_command:'/wayx accept'><hover:show_text:'Click to accept'><green>[Accept]</green></hover></click> <click:run_command:'/wayx deny'><hover:show_text:'Click to deny'><red>[Deny]</red></hover></click>〉"
+    accepted: "<prefix><green><target></green> accepted your waypoint <yellow><waypoint></yellow>.</green>"
+    denied: "<prefix><red>Waypoint <yellow><waypoint></yellow> share request was denied.</red>"
+    expired: "<prefix><gray>The waypoint share request expired.</gray>"
+    no-pending: "<prefix><red>You have no pending waypoint share request.</red>"
+    self-target: "<prefix><red>You cannot share a waypoint with yourself.</red>"
+    copied: "<prefix><green>Received waypoint <yellow><waypoint></yellow> from <player>.</green>"
+  gui:
+    title: "<dark_gray>Waypoints (<page>/<total>)</dark_gray>"
+    manage-title: "<dark_gray>Waypoint Management (<page>/<total>)</dark_gray>"
+    action-title: "<dark_gray>Manage Waypoint <yellow><waypoint></yellow></dark_gray>"
+    share-title: "<dark_gray>Share <yellow><waypoint></yellow> - Select Player (<page>/<total>)</dark_gray>"
+    empty: "<prefix><yellow>No waypoints are available.</yellow>"
+    waypoint-name: "<yellow><waypoint></yellow>"
+    waypoint-lore: "<gray><world> (<x>, <y>, <z>)</gray>"
+    prev: "<gray><< Previous</gray>"
+    next: "<gray>Next >></gray>"
+    add-button: "<green>+ Add New Waypoint</green>"
+    manage-button: "<green>☰ Manage Waypoints</green>"
+    action-teleport: "<aqua>Teleport</aqua>"
+    action-delete: "<red>Delete</red>"
+    action-share: "<gold>Share</gold>"
+    action-back: "<gray>Back</gray>"
+    share-player-name: "<yellow><player></yellow>"
+    share-no-targets: "<prefix><red>No other players are online to share with.</red>"
+    add-prompt: "<prefix><yellow>Enter a waypoint name in chat. (Type 'cancel' to cancel)</yellow>"
+    add-timeout: "<prefix><red>Waypoint creation timed out.</red>"
+    add-cancelled: "<prefix><gray>Waypoint creation cancelled.</gray>"
 
 tpa:
   sent: "<prefix><green>Sent a teleport request to <target>.</green>"

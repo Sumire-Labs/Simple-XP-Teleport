@@ -7,5 +7,6 @@ public enum CommandKey {
     TPAHERE,
     RTPX,
     TPPOSX,
+    WAYX,
     BACKX
 }

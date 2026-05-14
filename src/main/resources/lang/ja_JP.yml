@@ -1,6 +1,6 @@
 # Simple XP Teleport - 日本語メッセージ(MiniMessage 形式)
 # プレースホルダ: <player>, <target>, <cost>, <cooldown>, <warmup>, <seconds>,
-#                <distance>, <world>, <home>, <warp>, <x>, <y>, <z>, <count>, <max>
+#                <distance>, <world>, <home>, <warp>, <waypoint>, <x>, <y>, <z>, <count>, <max>
 
 prefix: "<gray>[<aqua>SXT</aqua>]</gray> "
 
@@ -79,6 +79,46 @@ warp:
     delete-success: "<prefix><green>warp <yellow><warp></yellow> を削除しました。</green>"
     pending-timeout: "<prefix><red>warp 作成がタイムアウトしました。</red>"
     teleported-admin: "<prefix><green>warp <yellow><warp></yellow> にテレポートしました（管理者）。</green>"
+
+waypoint:
+  teleporting: "<prefix><green>waypoint <yellow><waypoint></yellow> にテレポートします。</green>"
+  added: "<prefix><green>waypoint <yellow><waypoint></yellow> を追加しました。</green>"
+  deleted: "<prefix><green>waypoint <yellow><waypoint></yellow> を削除しました。</green>"
+  not-found: "<prefix><red>waypoint <yellow><waypoint></yellow> は存在しません。</red>"
+  limit-reached: "<prefix><red>waypoint の上限に達しました(<count>/<max>)。</red>"
+  invalid-name: "<prefix><red>waypoint 名は半角英数字、アンダースコア、ハイフンの 1〜32 文字で指定してください。</red>"
+  world-not-found: "<prefix><red>ワールド <yellow><world></yellow> が見つかりません。</red>"
+  share:
+    disabled: "<prefix><red>waypoint 共有は無効になっています。</red>"
+    sent: "<prefix><green><target></green> に waypoint <yellow><waypoint></yellow> の共有リクエストを送信しました。"
+    received: "<prefix><yellow><player></yellow> から waypoint <yellow><waypoint></yellow> の共有リクエスト 〈<click:run_command:'/wayx accept'><hover:show_text:'クリックで承認'><green>[承認]</green></hover></click> <click:run_command:'/wayx deny'><hover:show_text:'クリックで拒否'><red>[拒否]</red></hover></click>〉"
+    accepted: "<prefix><green><target></green> が waypoint <yellow><waypoint></yellow> の共有を承認しました。"
+    denied: "<prefix><red>waypoint <yellow><waypoint></yellow> の共有リクエストが拒否されました。</red>"
+    expired: "<prefix><gray>waypoint 共有リクエストが期限切れになりました。</gray>"
+    no-pending: "<prefix><red>保留中の waypoint 共有リクエストはありません。</red>"
+    self-target: "<prefix><red>自分自身に waypoint を共有することはできません。</red>"
+    copied: "<prefix><green><player> から waypoint <yellow><waypoint></yellow> を受け取りました。</green>"
+  gui:
+    title: "<dark_gray>Waypoint 一覧 (<page>/<total>)</dark_gray>"
+    manage-title: "<dark_gray>Waypoint 管理 (<page>/<total>)</dark_gray>"
+    action-title: "<dark_gray>Waypoint <yellow><waypoint></yellow> の操作</dark_gray>"
+    share-title: "<dark_gray><yellow><waypoint></yellow> を共有 - プレイヤー選択 (<page>/<total>)</dark_gray>"
+    empty: "<prefix><yellow>利用可能な waypoint はありません。</yellow>"
+    waypoint-name: "<yellow><waypoint></yellow>"
+    waypoint-lore: "<gray><world> (<x>, <y>, <z>)</gray>"
+    prev: "<gray><< 前のページ</gray>"
+    next: "<gray>次のページ >></gray>"
+    add-button: "<green>+ 新しい waypoint を追加</green>"
+    manage-button: "<green>☰ Waypoint 管理</green>"
+    action-teleport: "<aqua>テレポート</aqua>"
+    action-delete: "<red>削除</red>"
+    action-share: "<gold>共有</gold>"
+    action-back: "<gray>戻る</gray>"
+    share-player-name: "<yellow><player></yellow>"
+    share-no-targets: "<prefix><red>共有可能なオンラインプレイヤーがいません。</red>"
+    add-prompt: "<prefix><yellow>チャットで waypoint 名を入力してください (cancel でキャンセル)。</yellow>"
+    add-timeout: "<prefix><red>waypoint 作成がタイムアウトしました。</red>"
+    add-cancelled: "<prefix><gray>waypoint 作成をキャンセルしました。</gray>"
 
 tpa:
   sent: "<prefix><green><target></green> にTPリクエストを送信しました。"

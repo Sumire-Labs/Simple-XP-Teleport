@@ -57,6 +57,10 @@ commands:
     description: "直前の位置に戻る"
     usage: "/backx"
     permission: sxt.use.backx
+  wayx:
+    description: "Manage personal waypoints"
+    usage: "/wayx [add|remove|list|share|accept|deny] [name] [player]"
+    permission: sxt.use.wayx
   sxtadmin:
     description: "Simple XP Teleport 管理コマンド"
     usage: "/sxtadmin <reload|debug|...>"
@@ -95,6 +99,12 @@ permissions:
   sxt.use.tpposx:
     description: "/tpposx 使用"
     default: op
+  sxt.use.wayx:
+    description: "/wayx 使用"
+    default: true
+  sxt.use.wayx.share:
+    description: "/wayx share 使用"
+    default: true
   sxt.use.*:
     description: "全使用権限"
     default: op
@@ -110,6 +120,8 @@ permissions:
       sxt.use.rtpx: true
       sxt.use.backx: true
       sxt.use.tpposx: true
+      sxt.use.wayx: true
+      sxt.use.wayx.share: true
   sxt.manage.warp:
     description: "warp の作成/削除"
     default: op
@@ -121,6 +133,12 @@ permissions:
     default: false
   sxt.homes.unlimited:
     description: "home 無制限"
+    default: op
+  sxt.waypoints.max.10:
+    description: "waypoint 所持上限を 10 に拡張（任意の n に対応: sxt.waypoints.max.<n>）"
+    default: false
+  sxt.waypoints.unlimited:
+    description: "waypoint 無制限"
     default: op
   sxt.bypass.cooldown.<cmd>:
     description: "指定コマンドのCDをバイパス"
@@ -171,6 +189,7 @@ permissions:
       sxt.use.*: true
       sxt.admin.*: true
       sxt.homes.unlimited: true
+      sxt.waypoints.unlimited: true
       sxt.bypass.cooldown.*: true
       sxt.bypass.warmup.*: true
       sxt.bypass.combat.*: true

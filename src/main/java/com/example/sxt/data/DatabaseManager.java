@@ -31,6 +31,17 @@ public final class DatabaseManager {
     }
 
     /**
+     * Constructor for unit tests.
+     * Allows injecting a custom JDBC URL (e.g., a temporary file or in-memory SQLite).
+     */
+    @VisibleForTesting
+    public DatabaseManager(SimpleXpTeleportPlugin plugin, String url) {
+        this.plugin = plugin;
+        this.logger = plugin.getLogger();
+        this.url = url;
+    }
+
+    /**
      * Opens the database, applies PRAGMAs, and creates tables if they
      * do not yet exist.  Must be called on the server thread during
      * {@code onEnable}, before any DAO method is invoked.
@@ -79,6 +90,28 @@ public final class DatabaseManager {
                             created_at    INTEGER NOT NULL,
                             updated_at    INTEGER NOT NULL
                         );
+                        """);
+
+                stmt.execute("""
+                        CREATE TABLE IF NOT EXISTS waypoints (
+                            id            INTEGER PRIMARY KEY AUTOINCREMENT,
+                            owner_uuid    TEXT    NOT NULL,
+                            name          TEXT    NOT NULL,
+                            world         TEXT    NOT NULL,
+                            x             REAL    NOT NULL,
+                            y             REAL    NOT NULL,
+                            z             REAL    NOT NULL,
+                            yaw           REAL    NOT NULL,
+                            pitch         REAL    NOT NULL,
+                            created_at    INTEGER NOT NULL,
+                            updated_at    INTEGER NOT NULL,
+                            UNIQUE(owner_uuid, name)
+                        );
+                        """);
+
+                stmt.execute("""
+                        CREATE INDEX IF NOT EXISTS idx_waypoints_owner
+                            ON waypoints(owner_uuid);
                         """);
 
                 stmt.execute("""
