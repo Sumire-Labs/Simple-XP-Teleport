@@ -18,8 +18,8 @@ commands:
     usage: "/delhomex [name]"
     permission: sxt.use.delhomex
   warpx:
-    description: "warpへテレポート"
-    usage: "/warpx <name>"
+    description: "Open warp GUI or teleport to warp"
+    usage: "/warpx [name]"
     permission: sxt.use.warpx
   setwarpx:
     description: "現在位置をwarpとして登録"
@@ -152,12 +152,16 @@ permissions:
   sxt.admin.debug:
     description: "デバッグ切替"
     default: op
+  sxt.admin.warp.gui:
+    description: "管理者 warp GUI を使用"
+    default: op
   sxt.admin.*:
     description: "全管理権限"
     default: op
     children:
       sxt.admin.reload: true
       sxt.admin.debug: true
+      sxt.admin.warp.gui: true
       sxt.manage.warp: true
       sxt.manage.home.others: true
   sxt.*:

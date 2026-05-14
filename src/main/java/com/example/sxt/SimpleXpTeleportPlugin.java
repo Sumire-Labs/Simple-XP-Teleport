@@ -21,6 +21,8 @@ import com.example.sxt.data.dao.HomeDao;
 import com.example.sxt.data.dao.WarpDao;
 import com.example.sxt.hook.PlaceholderApiHook;
 import com.example.sxt.hook.WorldGuardHook;
+import com.example.sxt.gui.WarpGuiListener;
+import com.example.sxt.gui.WarpGuiService;
 import com.example.sxt.listener.EntityDamageListener;
 import com.example.sxt.listener.PlayerDeathListener;
 import com.example.sxt.listener.PlayerMoveListener;
@@ -55,6 +57,7 @@ public final class SimpleXpTeleportPlugin extends JavaPlugin {
     private RandomLocationFinder randomLocationFinder;
     private TeleportService teleportService;
     private TeleportRequest teleportRequest;
+    private WarpGuiService warpGuiService;
     private DebugLogger debugLogger;
 
     @Override
@@ -98,6 +101,7 @@ public final class SimpleXpTeleportPlugin extends JavaPlugin {
         teleportRequest = new TeleportRequest(this);
         teleportRequest.startCleanupTask();
 
+        warpGuiService = new WarpGuiService(this);
         debugLogger = new DebugLogger(this);
 
         // Register listeners
@@ -110,6 +114,8 @@ public final class SimpleXpTeleportPlugin extends JavaPlugin {
                 new PlayerDeathListener(this), this);
         getServer().getPluginManager().registerEvents(
                 new PlayerTeleportListener(this), this);
+        getServer().getPluginManager().registerEvents(
+                new WarpGuiListener(this, warpGuiService), this);
 
         getLogger().info("Simple XP Teleport skeleton is loading.");
 
@@ -203,6 +209,10 @@ public final class SimpleXpTeleportPlugin extends JavaPlugin {
 
     public WorldGuardHook getWorldGuardHook() {
         return worldGuardHook;
+    }
+
+    public WarpGuiService getWarpGuiService() {
+        return warpGuiService;
     }
 
     public DebugLogger getDebugLogger() {

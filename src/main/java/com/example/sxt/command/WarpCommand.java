@@ -46,13 +46,25 @@ public final class WarpCommand implements CommandExecutor {
                              @NotNull Command command,
                              @NotNull String label,
                              @NotNull String[] args) {
-        if (!(sender instanceof Player player)) {
-            msg.send(sender, "general.player-only", Map.of());
+        // No arguments → open GUI for players
+        if (args.length == 0) {
+            if (!(sender instanceof Player player)) {
+                msg.send(sender, "general.player-only", Map.of());
+                return true;
+            }
+            plugin.getWarpGuiService().openPublicGui(player);
             return true;
         }
 
-        if (args.length != 1) {
+        // Too many arguments
+        if (args.length > 1) {
             msg.send(sender, "general.usage", Map.of("usage", command.getUsage()));
+            return true;
+        }
+
+        // Exactly 1 argument → existing warp teleport
+        if (!(sender instanceof Player player)) {
+            msg.send(sender, "general.player-only", Map.of());
             return true;
         }
 

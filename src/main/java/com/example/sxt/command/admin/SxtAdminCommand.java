@@ -28,7 +28,7 @@ import java.util.concurrent.Executor;
 import java.util.logging.Level;
 
 /**
- * /sxtadmin reload | debug | home &lt;player&gt; list | home &lt;player&gt; delete &lt;name&gt; | home &lt;player&gt; tp &lt;name&gt;
+ * /sxtadmin reload | debug | warp | home &lt;player&gt; list | home &lt;player&gt; delete &lt;name&gt; | home &lt;player&gt; tp &lt;name&gt;
  */
 public final class SxtAdminCommand implements CommandExecutor, TabCompleter {
 
@@ -61,6 +61,7 @@ public final class SxtAdminCommand implements CommandExecutor, TabCompleter {
             return handleHome(sender, command, args);
         }
 
+        if ("warp".equals(sub))   return handleWarp(sender);
         if ("reload".equals(sub)) return handleReload(sender);
         if ("debug".equals(sub))  return handleDebug(sender);
 
@@ -86,6 +87,19 @@ public final class SxtAdminCommand implements CommandExecutor, TabCompleter {
         plugin.getPluginConfig().toggleDebug();
         String key = plugin.getPluginConfig().isDebug() ? "general.debug-on" : "general.debug-off";
         msg.send(sender, key, null);
+        return true;
+    }
+
+    private boolean handleWarp(CommandSender sender) {
+        if (!(sender instanceof Player player)) {
+            msg.send(sender, "general.player-only", Map.of());
+            return true;
+        }
+        if (!player.hasPermission("sxt.admin.warp.gui")) {
+            msg.send(player, "general.no-permission", Map.of());
+            return true;
+        }
+        plugin.getWarpGuiService().openAdminGui(player);
         return true;
     }
 
@@ -279,7 +293,7 @@ public final class SxtAdminCommand implements CommandExecutor, TabCompleter {
 
     // ── Tab completion ────────────────────────────────────────
 
-    private static final List<String> SUBCOMMANDS = List.of("reload", "debug", "home");
+    private static final List<String> SUBCOMMANDS = List.of("reload", "debug", "warp", "home");
     private static final List<String> HOME_SUBCOMMANDS = List.of("list", "delete", "tp");
 
     @Override
