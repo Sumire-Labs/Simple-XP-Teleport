@@ -154,30 +154,30 @@ commands:
     safety-check: NONE
     blacklist-worlds: []
 
-   backx:
-     cost:
-       mode: LEVEL
-       type: FIXED
-       amount: 1
-       cross-world-extra: 2
-     cooldown: 5
-     warmup: 0
-     cancel-on-move: false
-     cancel-on-damage: false
-     allow-in-combat: true   # 死亡直後の復帰用に許可
-     safety-check: NONE
-     blacklist-worlds: []
+  backx:
+    cost:
+      mode: LEVEL
+      type: FIXED
+      amount: 1
+      cross-world-extra: 2
+    cooldown: 5
+    warmup: 0
+    cancel-on-move: false
+    cancel-on-damage: false
+    allow-in-combat: true   # 死亡直後の復帰用に許可
+    safety-check: NONE
+    blacklist-worlds: []
 
-   wayx:
-     cost:
-       mode: LEVEL
-       type: FIXED
-       amount: 2
-       cross-world-extra: 3
-     cooldown: 3
-     warmup: 2
-     cancel-on-move: true
-     cancel-on-damage: true
-     allow-in-combat: false
-     safety-check: NONE
-     blacklist-worlds: []
+  wayx:
+    cost:
+      mode: LEVEL
+      type: FIXED
+      amount: 2
+      cross-world-extra: 3
+    cooldown: 3
+    warmup: 2
+    cancel-on-move: true
+    cancel-on-damage: true
+    allow-in-combat: false
+    safety-check: NONE
+    blacklist-worlds: []
