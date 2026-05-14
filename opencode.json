@@ -44,7 +44,7 @@
     "explore": {
       "description": "コード調査・探索担当。実装方針を決める前のコードベース把握、依存関係の追跡、既存実装の特定などに必ず呼び出す。書き込みは行わない読み取り専用エージェント。",
       "mode": "subagent",
-      "model": "anthropic/claude-haiku-4-5",
+      "model": "deepseek/deepseek-v4-flash",
       "prompt": "{file:./prompts/explore.txt}",
       "temperature": 0.1,
       "permission": {
